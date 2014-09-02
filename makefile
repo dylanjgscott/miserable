@@ -1,2 +1,4 @@
-# TODO
-# Write a makefile
+LEXER=alex
+
+lexer.hs: miserable.x
+	$(LEXER) -o $@ $^
