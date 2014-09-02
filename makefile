@@ -1,4 +1,4 @@
 LEXER=alex
 
 lexer.hs: miserable.x
-	$(LEXER) -o $@ $^
+	$(LEXER) -o $@ $<
