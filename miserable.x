@@ -13,11 +13,15 @@ tokens :-
     BEGIN                 { \s -> Begin }
     END                   { \s -> End }
     =                     { \s -> Equals }
+    \(                    { \s -> OpenParen }
+    \)                    { \s -> CloseParen }
     IF                    { \s -> If }
     THEN                  { \s -> Then }
     ELSE                  { \s -> Else }
     RETURN                { \s -> Return }
--- I think these have to go last
+
+-- I believe these have to go last otherwise 'VARS' becomes
+-- an 'Id' token instead of a 'Vars s' token.
     \-?$digit+ 	          { \s -> Num (read s) }
     $alpha[$alpha$digit]* { \s -> Id s }
     [\+-\*\/\<>]          { \s -> Op s }
