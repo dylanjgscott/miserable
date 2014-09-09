@@ -1,0 +1,4 @@
+fact1.txt
+	example program from Assignment PDF.
+test1.txt
+	smallest program I can think of that should be valid.
