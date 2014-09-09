@@ -11,25 +11,25 @@ $alpha =      [a-zA-Z]
 tokens :-
 
     $white+               ;
-    FUNCTION              { \s -> Function }
-    VARS                  { \s -> Vars }
-    \;                    { \s -> Semicolon }
-    \,                    { \s -> Comma }
-    BEGIN                 { \s -> Begin }
-    END                   { \s -> End }
-    =                     { \s -> Equals }
-    \(                    { \s -> ParenOpen }
-    \)                    { \s -> ParenClose }
-    IF                    { \s -> If }
-    THEN                  { \s -> Then }
-    ELSE                  { \s -> Else }
-    RETURN                { \s -> Return }
-    \-?$digit+ 	          { \s -> Num (read s) }
-    $alpha[$alpha$digit]* { \s -> Id s }
-    \+                    { \s -> Op s }
-    \-                     { \s -> Op s }
-    \*                    { \s -> Op s }
-    \/                     { \s -> Op s }
-    \<                     { \s -> Op s }
-    \>                     { \s -> Op s }
-    ==                    { \s -> Op s }
+    FUNCTION              { \s -> TokenFunction }
+    VARS                  { \s -> TokenVars }
+    \;                    { \s -> TokenSemicolon }
+    \,                    { \s -> TokenComma }
+    BEGIN                 { \s -> TokenBegin }
+    END                   { \s -> TokenEnd }
+    =                     { \s -> TokenEquals }
+    \(                    { \s -> TokenParenen }
+    \)                    { \s -> TokenParenClose }
+    IF                    { \s -> TokenIf }
+    THEN                  { \s -> TokenThen }
+    ELSE                  { \s -> TokenElse }
+    RETURN                { \s -> TokenReturn }
+    \-?$digit+ 	          { \s -> TokenNum (read s) }
+    $alpha[$alpha$digit]* { \s -> TokenId s }
+    \+                    { \s -> TokenPlus}
+    \-                     { \s -> TokenMinus}
+    \*                    { \s -> TokenTimes}
+    \/                     { \s -> TokenDivide}
+    \<                     { \s -> TokenLT}
+    \>                     { \s -> TokenGT}
+    ==                    { \s -> TokenEQ}
