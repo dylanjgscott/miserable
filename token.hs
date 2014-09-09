@@ -1,19 +1,25 @@
 module Token where
 
-data Token = Function
-           | Vars
-           | Semicolon
-           | Comma
-           | Begin
-           | End
-           | Equals
-           | ParenOpen
-           | ParenClose
-           | If
-           | Then
-           | Else
-           | Return
-           | Num Int
-           | Id String
-           | Op String
+data Token = TokenFunction
+           | TokenVars
+           | TokenSemicolon
+           | TokenComma
+           | TokenBegin
+           | TokenEnd
+           | TokenEquals
+           | TokenParenOpen
+           | TokenParenClose
+           | TokenIf
+           | TokenThen
+           | TokenElse
+           | TokenReturn
+           | TokenNum Int
+           | TokenId String
+           | TokenPlus
+           | TokenMinus
+           | TokenTimes
+           | TokenDivide
+           | TokenLT
+           | TokenGT
+           | TokenEQ
            deriving (Eq, Show)
