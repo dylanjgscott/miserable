@@ -5,7 +5,7 @@ HC=ghc
 all: lexer.hs parser.hs
 
 lexer.hs: miserable.x
-	$(LEXER) -o $@ $<
+	$(LEXER) -o $@ $^
 
 parser.hs: miserable.y
 	$(PARSER) -iparser.info $< -o $@
