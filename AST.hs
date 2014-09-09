@@ -1,5 +1,5 @@
 module AST where
-import Prelude
+import Prelude hiding (Num)
 
 -- TODO Use list instead of custom Cons
 -- NOTE This is pretty gross.
@@ -26,7 +26,7 @@ data Statement = Assign Id Exp
                | Return Id
                deriving Show
 
-data Exp = ExpNum AST.Num
+data Exp = ExpNum Num
          | ExpId Id
          | ExpFun Id IdList
          | ExpOp Op Exp Exp
