@@ -1,4 +1,6 @@
 -- Main miserable source file.  
+-- Compiling this file to make sure Parser and Lexer work
+
 
 --import miserable_parser
 import Parser
@@ -6,6 +8,8 @@ import Lexer
 import Token
 import Data.Char
 import System.Environment
+
+
 
 
 -- 
