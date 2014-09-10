@@ -4,16 +4,14 @@ HC=ghc
 
 all: Lexer.hs Parser.hs Miserable
 
-Lexer.hs: miserable.x
-	$(LEXER) -o $@ $^
+Lexer.hs: Miserable.x
+	$(LEXER) -o $@ $<
 
-Parser.hs: miserable.y
-	$(PARSER) -iparser.info $< -o $@
+Parser.hs: Miserable.y
+	$(PARSER) -iParser.info -o $@ $<
 
 Miserable: Miserable.hs
-	$(HC) --make $<
+	$(HC) --make -o $@ $<
 
 clean:
-	rm Pexer.hs Parser.hs parser.info Miserable Miserable.hi
-
-
+	rm Lexer.hs Parser.hs Parser.info Miserable Miserable.hi

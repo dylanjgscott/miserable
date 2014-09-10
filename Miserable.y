@@ -23,7 +23,7 @@
 ---------------------------------------------------------------------
 {
 module Parser where
-import Exp
+import Program
 import Token
 import Data.Char
 }
@@ -77,6 +77,3 @@ Factor  : int                           { Int    $1       }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 }
-
-
-

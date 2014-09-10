@@ -1,4 +1,4 @@
-module AST where
+module Program where
 import Prelude
 
 -- TODO Use list instead of custom Cons
@@ -26,7 +26,7 @@ data Statement = Assign Id Exp
                | Return Id
                deriving Show
 
-data Exp = ExpNum AST.Num
+data Exp = ExpNum Program.Num
          | ExpId Id
          | ExpFun Id IdList
          | ExpOp Op Exp Exp
