@@ -18,7 +18,7 @@ tokens :-
     BEGIN                 { \s -> TokenBegin }
     END                   { \s -> TokenEnd }
     =                     { \s -> TokenEquals }
-    \(                    { \s -> TokenParenen }
+    \(                    { \s -> TokenParenOpen }
     \)                    { \s -> TokenParenClose }
     IF                    { \s -> TokenIf }
     THEN                  { \s -> TokenThen }

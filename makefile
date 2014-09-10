@@ -2,13 +2,18 @@ LEXER=alex
 PARSER=happy
 HC=ghc
 
-all: lexer.hs parser.hs
+all: Lexer.hs Parser.hs Miserable
 
-lexer.hs: miserable.x
+Lexer.hs: miserable.x
 	$(LEXER) -o $@ $^
 
-parser.hs: miserable.y
+Parser.hs: miserable.y
 	$(PARSER) -iparser.info $< -o $@
 
+Miserable: Miserable.hs
+	$(HC) --make $<
+
 clean:
-	rm lexer.hs parser.hs parser.info
+	rm Pexer.hs Parser.hs parser.info Miserable Miserable.hi
+
+
