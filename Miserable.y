@@ -26,30 +26,28 @@ import Data.Char
 -- Specify how we will refer to the data contructors that represent
 -- each token when defining the grammar.
 %token
-FUNCTION				{ TokenFunction		}	
-VARS					{ TokenVars		$$	}
-';'						{ TokenSemicolon	}		
-','						{ TokenComma		}	
-BEGIN					{ TokenBegin		}	
-END 					{ TokenEnd			}
-'='						{ TokenEquals		}	
-'(' 					{ TokenParenOpen	}		
-')' 					{ TokenParenClose	}		
-IF 						{ TokenIf			}
-THEN 					{ TokenThen			}
-ELSE 					{ TokenElse			}
-RETURN 					{ TokenReturn		}	
-int 					{ TokenNum Int	$$	}	
-Id 		 				{ TokenId String 	}		
-'+'						{ TokenPlus			}
-'-'						{ TokenMinus		}	
-'*' 					{ TokenTimes		}	
-'/' 					{ TokenDivide		}	
-'<' 					{ TokenLT			}
-'>'						{ TokenGT			}
-'=='					{ TokenEQ			}
-
-
+FUNCTION	{ TokenFunction		}	
+VARS		{ TokenVars		$$	}
+';'			{ TokenSemicolon	}		
+','			{ TokenComma		}	
+BEGIN		{ TokenBegin		}	
+END 		{ TokenEnd			}
+'='			{ TokenEquals		}	
+'(' 		{ TokenParenOpen	}		
+')' 		{ TokenParenClose	}		
+IF 			{ TokenIf			}
+THEN 		{ TokenThen			}
+ELSE 		{ TokenElse			}
+RETURN 		{ TokenReturn		}	
+int 		{ TokenNum Int	$$	}	
+Id 		 	{ TokenId String 	}		
+'+'			{ TokenPlus			}
+'-'			{ TokenMinus		}	
+'*' 		{ TokenTimes		}	
+'/' 		{ TokenDivide		}	
+'<' 		{ TokenLT			}
+'>'			{ TokenGT			}
+'=='		{ TokenEQ			}
 -- Grammer for Language below
 %%
 Exp     : let var '=' Exp in Exp        { Let    $2 $4 $6 }
