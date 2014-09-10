@@ -32,7 +32,7 @@ data Exp = ExpNum Program.Num
          | ExpOp Op Exp Exp
          deriving Show
 
-data Num = Num Integer
+data Num = Num Int
            deriving Show
 
 data Id = Id String
