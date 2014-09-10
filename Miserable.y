@@ -1,21 +1,4 @@
-
--- parser from the lecture Demo - this is dummy content for now so I can compile it. 
-
-
-
-
-
-
-
-
-
-
-
 ---------------------------------------------------------------------
--- This is a parser defined with the Happy parser generator tool.
--- See http://www.haskell.org/happy/ for details.
---
--- Happy is installed by default along with the Haskell platform.
 -- 
 -- Convert this file to a Haskell source file with:
 --  happy -iParser.info Parser.y
@@ -29,7 +12,7 @@ import Data.Char
 }
 
 ---------------------------------------------------------------------
--- Name of the parser.
+-- Miserable Parser.
 -- In the generated code we get a function  
 --   calc :: [Token] -> Exp
 %name           calc
@@ -43,19 +26,31 @@ import Data.Char
 -- Specify how we will refer to the data contructors that represent
 -- each token when defining the grammar.
 %token
- let            { TokenLet      }
- in             { TokenIn       }
- int            { TokenInt $$   }
- var            { TokenVar $$   }
- '='            { TokenEq       }
- '+'            { TokenPlus     }
- '-'            { TokenMinus    }
- '*'            { TokenTimes    }
- '/'            { TokenDiv      }
- '('            { TokenBra      }
- ')'            { TokenKet      }
+FUNCTION				{ TokenFunction		}	
+VARS					{ TokenVars		$$	}
+';'						{ TokenSemicolon	}		
+','						{ TokenComma		}	
+BEGIN					{ TokenBegin		}	
+END 					{ TokenEnd			}
+'='						{ TokenEquals		}	
+'(' 					{ TokenParenOpen	}		
+')' 					{ TokenParenClose	}		
+IF 						{ TokenIf			}
+THEN 					{ TokenThen			}
+ELSE 					{ TokenElse			}
+RETURN 					{ TokenReturn		}	
+int 					{ TokenNum Int	$$	}	
+Id 		 				{ TokenId String 	}		
+'+'						{ TokenPlus			}
+'-'						{ TokenMinus		}	
+'*' 					{ TokenTimes		}	
+'/' 					{ TokenDivide		}	
+'<' 					{ TokenLT			}
+'>'						{ TokenGT			}
+'=='					{ TokenEQ			}
 
--- Here comes the grammar.
+
+-- Grammer for Language below
 %%
 Exp     : let var '=' Exp in Exp        { Let    $2 $4 $6 }
         | Exp1                          { Exp1   $1       }
