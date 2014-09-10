@@ -39,31 +39,51 @@ IF 			{ TokenIf			}
 THEN 		{ TokenThen			}
 ELSE 		{ TokenElse			}
 RETURN 		{ TokenReturn		}	
-int 		{ TokenNum Int	$$	}	
-Id 		 	{ TokenId String 	}		
-'+'			{ TokenPlus			}
-'-'			{ TokenMinus		}	
-'*' 		{ TokenTimes		}	
-'/' 		{ TokenDivide		}	
-'<' 		{ TokenLT			}
-'>'			{ TokenGT			}
-'=='		{ TokenEQ			}
+NUM 		{ TokenNum	$$		}	
+ID 	 		{ TokenId 			}		
+-- Don't need the rest of the individual tokens so grouping them all as OP	
+OP 			{ 	
+				TokenPlus	
+				TokenMinus	
+				TokenTimes	
+				TokenDivide
+				TokenLT		
+				TokenGT		
+				TokenEQ			
+			}
+
 -- Grammer for Language below
 %%
-Exp     : let var '=' Exp in Exp        { Let    $2 $4 $6 }
-        | Exp1                          { Exp1   $1       }
+Program 	: Functions							{ $1				}
 
-Exp1    : Exp1 '+' Term                 { Plus   $1 $3    }
-        | Exp1 '-' Term                 { Minus  $1 $3    }
-        | Term                          { Term   $1       }
+Functions	: 									{ []				} -- Epsilon
+			| Function Functions				{ $1 $2			}
 
-Term    : Term '*' Factor               { Times  $1 $3    }
-        | Term '/' Factor               { Div    $1 $3    }
-        | Factor                        { Factor $1       }
+Function 	: FUNCTION ID Args Variables Block	{ Function $1 $2 $3 $4 $5	}
 
-Factor  : int                           { Int    $1       }
-        | var                           { Var    $1       }
-        | '(' Exp ')'                   { Brack  $2       }
+Args		: '(' ')'							{ []				} -- Epsilon
+			| '(' IdList ')'					{ $2				}
+
+Variables 	: 									{ []				} --Epsilon
+			| VARS IdList ';'					{ $1 $2				}
+
+IdList 		: ID 								{ [Id $1]			} --From happy docs - i thik think this is right
+			| ID ',' IdList 					{ $1 : $2			}
+
+Block 		: BEGIN Statements END 				{ $2				}
+
+Statements  : 									{ []				} -- Epsilon
+			| Statement ';' Statements 			{ $1 : $2			}
+
+Statement 	: ID '=' Exp 						{ Assign $1 : $3	} 
+			| IF ID THEN Block 					{ If $2 $4			}
+			| IF ID THEN Block ELSE Block 		{ IfElse $2 $4 $6	}
+			| RETURN ID 						{ Return $2			}
+
+Exp 		: NUM 								{ Num $1 			}
+			| ID 								{ Id $1 			}
+			| ID Args 							{ Id $1 $2			}
+			| '(' Exp OP Exp ')'				{ ExpOp $3 $2 $4	}
 
 {
 -- Call this function when we get a parse error.
