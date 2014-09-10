@@ -63,7 +63,7 @@ Args		: '(' ')'							{ []				} -- Epsilon
 			| '(' IdList ')'					{ $2				}
 
 Variables 	: 									{ []				} --Epsilon
-			| VARS IdList ';'					{ $1 $2				}
+			| VARS IdList ';'					{ $2				}
 
 IdList 		: ID 								{ Id [$1]			} --From happy docs - i think think this is right
 			| ID ',' IdList 					{ Id $1 : $2		}
