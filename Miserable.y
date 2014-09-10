@@ -40,7 +40,7 @@ THEN 		{ TokenThen			}
 ELSE 		{ TokenElse			}
 RETURN 		{ TokenReturn		}	
 NUM 		{ TokenNum	$$		}	
-ID 	 		{ TokenId 			}		
+ID 	 		{ TokenId 	$$		}		
 -- Don't need the rest of the individual tokens so grouping them all as OP	
 OP 			{ TokenPlus	
 			  TokenMinus	
@@ -65,8 +65,8 @@ Args		: '(' ')'							{ []				} -- Epsilon
 Variables 	: 									{ []				} --Epsilon
 			| VARS IdList ';'					{ $1 $2				}
 
-IdList 		: ID 								{ [Id $1]			} --From happy docs - i think think this is right
-			| ID ',' IdList 					{ $1 : $2			}
+IdList 		: ID 								{ Id [$1]			} --From happy docs - i think think this is right
+			| ID ',' IdList 					{ Id $1 : $2		}
 
 Block 		: BEGIN Statements END 				{ $2				}
 
@@ -79,7 +79,7 @@ Statement 	: ID '=' Exp 						{ Assign $1 : $3	}
 			| RETURN ID 						{ Return $2			}
 
 Exp 		: NUM 								{ Num $1 			}
-			| ID 								{ [Id $1] 			}
+			| ID 								{ Id [$1] 			}
 			| ID Args 							{ Id $1 $2			}
 			| '(' Exp OP Exp ')'				{ ExpOp $3 $2 $4	}
 
