@@ -27,7 +27,7 @@ import Data.Char
 -- each token when defining the grammar.
 %token
 FUNCTION	{ TokenFunction		}	
-VARS		{ TokenVars		$$	}
+VARS		{ TokenVars			}
 ';'			{ TokenSemicolon	}		
 ','			{ TokenComma		}	
 BEGIN		{ TokenBegin		}	
@@ -42,15 +42,13 @@ RETURN 		{ TokenReturn		}
 NUM 		{ TokenNum	$$		}	
 ID 	 		{ TokenId 			}		
 -- Don't need the rest of the individual tokens so grouping them all as OP	
-OP 			{ 	
-				TokenPlus	
-				TokenMinus	
-				TokenTimes	
-				TokenDivide
-				TokenLT		
-				TokenGT		
-				TokenEQ			
-			}
+OP 			{ TokenPlus	
+			  TokenMinus	
+			  TokenTimes	
+			  TokenDivide
+			  TokenLT		
+			  TokenGT		
+			  TokenEQ }
 
 -- Grammer for Language below
 %%
@@ -59,7 +57,7 @@ Program 	: Functions							{ $1				}
 Functions	: 									{ []				} -- Epsilon
 			| Function Functions				{ $1 $2			}
 
-Function 	: FUNCTION ID Args Variables Block	{ Function $1 $2 $3 $4 $5	}
+Function 	: FUNCTION ID Args Variables Block	{ Function $2 $3 $4 $5	}
 
 Args		: '(' ')'							{ []				} -- Epsilon
 			| '(' IdList ')'					{ $2				}
@@ -67,7 +65,7 @@ Args		: '(' ')'							{ []				} -- Epsilon
 Variables 	: 									{ []				} --Epsilon
 			| VARS IdList ';'					{ $1 $2				}
 
-IdList 		: ID 								{ [Id $1]			} --From happy docs - i thik think this is right
+IdList 		: ID 								{ [Id $1]			} --From happy docs - i think think this is right
 			| ID ',' IdList 					{ $1 : $2			}
 
 Block 		: BEGIN Statements END 				{ $2				}
@@ -81,7 +79,7 @@ Statement 	: ID '=' Exp 						{ Assign $1 : $3	}
 			| RETURN ID 						{ Return $2			}
 
 Exp 		: NUM 								{ Num $1 			}
-			| ID 								{ Id $1 			}
+			| ID 								{ [Id $1] 			}
 			| ID Args 							{ Id $1 $2			}
 			| '(' Exp OP Exp ')'				{ ExpOp $3 $2 $4	}
 
