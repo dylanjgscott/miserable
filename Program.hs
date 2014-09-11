@@ -24,6 +24,9 @@ data Args = ArgsEmpty
 data IdList = IdList Id IdList
             deriving Show
 
+data Block = Block Statements
+           deriving Show
+
 data Statements = EmptyStatements
                 | Statements Statement Statements
                 deriving Show
