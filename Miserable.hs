@@ -3,11 +3,13 @@
 
 
 --import miserable_parser
+import Data.Char
+import System.Environment
+
 import Parser
 import Lexer
 import Token
-import Data.Char
-import System.Environment
+import Semantic
 
 
 
@@ -26,3 +28,4 @@ main
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
         print (calc (alexScanTokens source))
+        print (mainDefined (calc (alexScanTokens source)))

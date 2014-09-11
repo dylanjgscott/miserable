@@ -10,7 +10,7 @@ Lexer.hs: Miserable.x
 Parser.hs: Miserable.y
 	$(PARSER) -iParser.info -o $@ $<
 
-Miserable: Miserable.hs Lexer.hs Parser.hs
+Miserable: Miserable.hs Lexer.hs Parser.hs Semantic.hs
 	$(HC) --make -o $@ $<
 
 clean:
