@@ -16,6 +16,7 @@ Miserable: Miserable.hs Lexer.hs Parser.hs Semantic.hs
 clean:
 	rm -f Token.hi Token.o
 	rm -f Program.hi Program.o
+	rm -f Semantic.hi Semantic.o
 	rm -f Lexer.hs Lexer.hi Lexer.o
 	rm -f Parser.info Parser.hs Parser.hi Parser.o
 	rm -f Miserable.hi Miserable.o Miserable
