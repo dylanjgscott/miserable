@@ -14,4 +14,15 @@ import System.Environment
 
 -- 
 main :: IO ()
-main = print ("test") 
+main  
+ = do   -- Use the first command-line argument as the file name.
+        [fileName]      <- getArgs
+
+        -- Read in the source file.
+        source          <- readFile fileName
+
+  
+
+        -- Lex, parse and print result to the console,
+        -- use the alex generated lexer.
+        print (calc (alexScanTokens source))
