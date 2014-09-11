@@ -3,7 +3,7 @@ module Program where
 -- TODO Use list instead of custom Cons
 -- NOTE This is pretty gross.
 
-data Program = Functions
+data Program = Program Functions
              deriving Show
 
 data Functions = EmptyFunction
@@ -13,8 +13,11 @@ data Functions = EmptyFunction
 data Function = Function Id IdList IdList Statements
               deriving Show
 
-data IdList = EmptyIdList
-            | IdList Id IdList
+data Args = ArgsEmpty
+          | Args IdList
+          deriving Show
+
+data IdList = IdList Id IdList
             deriving Show
 
 data Statements = EmptyStatements
