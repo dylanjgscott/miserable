@@ -6,7 +6,7 @@ module Program where
 data Program = Program Functions
              deriving Show
 
-data Functions = EmptyFunction
+data Functions = EmptyFunctions
                | Functions Function Functions
               deriving Show
 

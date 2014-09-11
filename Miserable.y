@@ -56,7 +56,7 @@ ID          { TokenId   $$      }
 %%
 Program     : Functions                             { Program $1            }
 
-Functions   : {-empty-}                             { EmptyFunction         } -- Epsilon
+Functions   : {-empty-}                             { EmptyFunctions        } -- Epsilon
             | Function Functions                    { Functions $1 $2       }
 
 Function    : FUNCTION IdProd Args Variables Block  { Function $2 $3 $4 $5  }
