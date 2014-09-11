@@ -39,7 +39,7 @@ data Statement = Assign Id Exp
 
 data Exp = ExpNum Program.Num
          | ExpId Id
-         | ExpFun Id IdList
+         | ExpFun Id Args
          | ExpOp Op Exp Exp
          deriving Show
 
