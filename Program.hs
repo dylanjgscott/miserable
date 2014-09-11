@@ -21,7 +21,8 @@ data Args = ArgsEmpty
           | Args IdList
           deriving Show
 
-data IdList = IdList Id IdList
+data IdList = IdListSingle Id
+            | IdList Id IdList
             deriving Show
 
 data Block = Block Statements

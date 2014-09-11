@@ -74,7 +74,7 @@ Variables   : {-empty-}                         { VarsEmpty             } --Epsi
             | VARS IdList ';'                   { Vars $2               }
 
 IdList      : IDProd                                { IdListSingle $1     } 
-            | IDProd ',' IdList                     { IdList Id $1 $3       }
+            | IDProd ',' IdList                     { IdList $1 $3       }
 
 Block       : BEGIN Statements END              { Block $2      }
 
