@@ -1,16 +1,17 @@
 module Program where
-import Prelude
 
 -- TODO Use list instead of custom Cons
 -- NOTE This is pretty gross.
 
-data Program = EmptyProgram
-             | Program Function Program
+data Program = Functions
              deriving Show
+
+data Functions = EmptyFunction
+               | Functions Function Functions
+              deriving Show
 
 data Function = Function Id IdList IdList Statements
               deriving Show
-
 
 data IdList = EmptyIdList
             | IdList Id IdList
