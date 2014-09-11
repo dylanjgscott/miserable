@@ -10,7 +10,7 @@ data Functions = EmptyFunction
                | Functions Function Functions
               deriving Show
 
-data Function = Function Id IdList IdList Statements
+data Function = Function Id Args Vars Block
               deriving Show
 
 data Vars = VarsEmpty
@@ -33,8 +33,8 @@ data Statements = EmptyStatements
                 deriving Show
 
 data Statement = Assign Id Exp
-               | If Id Statements
-               | IfElse Id Statements Statements
+               | If Id Block
+               | IfElse Id Block Block
                | Return Id
                deriving Show
 

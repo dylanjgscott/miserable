@@ -86,7 +86,7 @@ Statement   : IDProd '=' Exp                        { Assign $1 $3      }
             | IF IDProd THEN Block ELSE Block       { IfElse $2 $4 $6   }
             | RETURN IDProd                         { Return $2         }
 
-Exp         : NUM                               { ExpNum (Num $1)         }
+Exp         : NUMProd                               { ExpNum $1         }
             | IDProd                                { ExpId $1          }
             | IDProd Args                           { ExpFun $1 $2 }
             | '(' Exp '+' Exp ')'               { ExpOp OpAdd $2 $4 }
@@ -99,6 +99,7 @@ Exp         : NUM                               { ExpNum (Num $1)         }
 
 IDProd      : ID                                { Id $1             }
 
+NUMProd     : NUM                               { Program.Num $1    }
 --          | '(' Exp '+' Exp ')'               { ExpOp $3 $2 $4    }
 --          | '(' Exp '-' Exp ')'               { ExpOp $3 $2 $4    }
 --          | '(' Exp '*' Exp ')'               { ExpOp $3 $2 $4    }
