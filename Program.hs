@@ -13,6 +13,10 @@ data Functions = EmptyFunction
 data Function = Function Id IdList IdList Statements
               deriving Show
 
+data Vars = VarsEmpty
+          | Vars IdList
+          deriving Show
+
 data Args = ArgsEmpty
           | Args IdList
           deriving Show
