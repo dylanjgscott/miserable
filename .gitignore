@@ -1,5 +1,6 @@
-lexer.hs
-parser.hs
+Lexer.hs
+Parser.hs
+Parser.info
 *.o
 *.hi
-parser.info
+Miserable

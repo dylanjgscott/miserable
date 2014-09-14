@@ -10,7 +10,7 @@ BEGIN
 	ELSE
 	BEGIN
 		tmp = (n - 1);
-		tmp = (factorial(tmp)) * n);
+		tmp = (factorial(tmp) * n);
 		RETURN tmp;
 	END;
 END
@@ -18,6 +18,6 @@ END
 FUNCTION main(n)
 VARS tmp;
 BEGIN
-	tmp = factorial(n)
+	tmp = factorial(n);
 	RETURN tmp;
 END
