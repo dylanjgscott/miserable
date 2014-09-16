@@ -15,7 +15,7 @@ Parser.hs: Misery.y
 misery: Misery.hs Lexer.hs Parser.hs Semantic.hs
 	$(HC) --make -o $@ $<
 
-tester: Tester.hs ParserTester.hs LexerTester.hs
+tester: Tester.hs ParserTests.hs LexerTests.hs
 	$(HC) --make -o $(TEST)/$@ $< -itests/
 
 
@@ -27,7 +27,8 @@ clean:
 	rm -f Parser.info Parser.hs Parser.hi Parser.o
 	rm -f Misery.hi Misery.o misery
 	rm -f $(TEST)/Tester.hi $(TEST)/Tester.o $(TEST)/tester
-	rm -f $(TEST)/LexerTester.hi $(TEST)/LexerTester.o
-	rm -f $(TEST)/ParserTester.hi $(TEST)/ParserTester.o
-	rm -f $(TEST)/SemanticTester.hi $(TEST)/SemanticTester.o 
+	rm -f $(TEST)/LexerTests.hi $(TEST)/LexerTests.o
+	rm -f $(TEST)/ParserTests.hi $(TEST)/ParserTests.o
+	rm -f $(TEST)/SemanticTests.hi $(TEST)/SemanticTests.o
+
 	
