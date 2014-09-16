@@ -12,7 +12,7 @@ Lexer.hs: Miserable.x
 Parser.hs: Miserable.y
 	$(PARSER) -iParser.info -o $@ $<
 
-tester: Tester.hs ParserTester.hs LexerTester.hs
+tester: Tester.hs ParserTests.hs LexerTests.hs
 	$(HC) --make -o $(TEST)/$@ $< -itests/
 
 Miserable: Miserable.hs Lexer.hs Parser.hs Semantic.hs
@@ -26,7 +26,8 @@ clean:
 	rm -f Parser.info Parser.hs Parser.hi Parser.o
 	rm -f Miserable.hi Miserable.o Miserable
 	rm -f $(TEST)/Tester.hi $(TEST)/Tester.o $(TEST)/tester
-	rm -f $(TEST)/LexerTester.hi $(TEST)/LexerTester.o
-	rm -f $(TEST)/ParserTester.hi $(TEST)/ParserTester.o
-	rm -f $(TEST)/SemanticTester.hi $(TEST)/SemanticTester.o 
+	rm -f $(TEST)/LexerTests.hi $(TEST)/LexerTests.o
+	rm -f $(TEST)/ParserTests.hi $(TEST)/ParserTests.o
+	rm -f $(TEST)/SemanticTests.hi $(TEST)/SemanticTests.o
+
 	

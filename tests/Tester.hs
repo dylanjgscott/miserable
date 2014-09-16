@@ -1,5 +1,5 @@
-import ParserTester
-import LexerTester
+import ParserTests
+import LexerTests
 import Parser
 import Lexer
 import Test.HUnit
