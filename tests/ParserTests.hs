@@ -1,4 +1,4 @@
-module ParserTester where
+module ParserTests where
 
 
 import Parser

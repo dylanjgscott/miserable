@@ -1,4 +1,4 @@
-module LexerTester where
+module LexerTests where
 
 import Lexer
 import Test.HUnit
