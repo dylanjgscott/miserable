@@ -1,3 +1,8 @@
+---------------------------
+Unit Testing Notes.
+Might move into readme later
+
+----------------------------
 UNIT TESTING SOURCE TREE
 
 - Must have HUnit installed
@@ -16,7 +21,7 @@ Testing Code
 2. Try to use same naming conventions
 
 
---| 
+--| Lexer and Parser Tests
 fact1.txt
 	example program from Assignment PDF.
 test1.txt
@@ -25,8 +30,8 @@ test2.txt
     even smaller - invalid but very small
 
 
--- |Interpreter Tests
+-- | Interpreter Tests
 interTest0.txt
-	Demo factorial program from assignment PDF **
+	Demo factorial program with no main function should error **
 interTest1.txt
-	Demo factorial without a main function **
+	Demo factorial working - should return valid result when passed with a param**
