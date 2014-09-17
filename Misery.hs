@@ -9,9 +9,7 @@ import System.Environment
 import Parser
 import Lexer
 import Token
-
-
-
+import Generator
 
 -- 
 main :: IO ()
@@ -26,4 +24,4 @@ main
 
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
-        print (calc (alexScanTokens source))
+        print (genProgram (calc (alexScanTokens source)))
