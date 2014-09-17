@@ -3,6 +3,7 @@ import LexerTests
 import Parser
 import Lexer
 import Test.HUnit
+import Token
 
 
 main = 
