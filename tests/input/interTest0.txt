@@ -20,7 +20,7 @@
         (st tmp r13)
         (ld r14 tmp)
         (ret r14)))
- (main (n)
+ (nomain (n)
     (0  (ld r1 n)
         (call r2 factorial r1)
         (st tmp r2)
