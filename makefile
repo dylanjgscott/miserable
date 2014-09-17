@@ -2,15 +2,15 @@ LEXER=alex
 PARSER=happy
 HC=ghc
 
-all: Miserable
+all: misery
 
-Lexer.hs: Miserable.x
+Lexer.hs: Misery.x
 	$(LEXER) -o $@ $<
 
-Parser.hs: Miserable.y
+Parser.hs: Misery.y
 	$(PARSER) -iParser.info -o $@ $<
 
-Miserable: Miserable.hs Lexer.hs Parser.hs Semantic.hs
+misery: Misery.hs Lexer.hs Parser.hs Semantic.hs
 	$(HC) --make -o $@ $<
 
 clean:
@@ -19,4 +19,4 @@ clean:
 	rm -f Semantic.hi Semantic.o
 	rm -f Lexer.hs Lexer.hi Lexer.o
 	rm -f Parser.info Parser.hs Parser.hi Parser.o
-	rm -f Miserable.hi Miserable.o Miserable
+	rm -f Misery.hi Misery.o misery
