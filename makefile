@@ -4,7 +4,7 @@ HC=ghc
 TEST=tests
 VPATH = tests
 
-all: misery tester
+all: misery
 
 Lexer.hs: Misery.x
 	$(LEXER) -o $@ $<
