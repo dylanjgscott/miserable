@@ -3,4 +3,5 @@ Parser.hs
 Parser.info
 *.o
 *.hi
-Miserable
+misery
+tests/tester
