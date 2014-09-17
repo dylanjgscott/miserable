@@ -18,6 +18,9 @@ misery: Misery.hs Lexer.hs Parser.hs Semantic.hs
 tester: Tester.hs ParserTests.hs LexerTests.hs
 	$(HC) --make -o $(TEST)/$@ $< -itests/
 
+tester: Tester.hs ParserTests.hs LexerTests.hs
+	$(HC) --make -o $(TEST)/$@ $< -itests/
+
 
 clean:
 	rm -f Token.hi Token.o
