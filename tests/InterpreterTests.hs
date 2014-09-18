@@ -9,14 +9,23 @@ import Test.HUnit
 -- 	main function with wrong name should faile
 ----------------------------
 
---removes newline from files
+-- | Helper Functions
+
+-- removes newline from files
 filt input = filter (/= '\n') input
 
+
+-- | Tests 
+
+
+-- Correct factorial program being passed 3 as int param
 test0 = TestCase (do
 		input <- readFile "tests/input/interTest0.txt"
 		expected <- readFile "tests/expected/interTest0.txt"
 		assertEqual "Factorial(3)"  "7" {- Run Company input 3 -} (filt expected)) 
 
+
+-- No main function defined
 test1 = TestCase (do
 		input <- readFile "tests/input/interTest1.txt"
 		expected <- readFile "tests/expected/interTest1.txt"
@@ -27,6 +36,6 @@ test1 = TestCase (do
 
 
 
-
+-- | List of Tests we pass to Tester.hs
 
 interpreterTests = TestList [TestLabel "test0" test0, TestLabel "test1" test1]
