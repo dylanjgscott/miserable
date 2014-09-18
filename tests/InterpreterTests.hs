@@ -9,15 +9,18 @@ import Test.HUnit
 -- 	main function with wrong name should faile
 ----------------------------
 
+--removes newline from files
+filt input = filter (/= '\n') input
+
 test0 = TestCase (do
-		input <- "tests/input/interTest0.txt"
-		expected <- "tests/expected/interTest0.txt"
-		assertEqual "Factorial(3)" ({- Run Company input 3 -})(expected)) 
+		input <- readFile "tests/input/interTest0.txt"
+		expected <- readFile "tests/expected/interTest0.txt"
+		assertEqual "Factorial(3)"  "7" {- Run Company input 3 -} (filt expected)) 
 
 test1 = TestCase (do
-		input <- "tests/input/interTest1.txt"
-		expectd <- "tests/expected/interTest1.txt"
-		assertEqual "no main" ({- run Company input 3 -})(expected))
+		input <- readFile "tests/input/interTest1.txt"
+		expected <- readFile "tests/expected/interTest1.txt"
+		assertEqual "no main" {- run Company input 3 -} "error" (filt expected))
 
 
 

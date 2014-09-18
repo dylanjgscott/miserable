@@ -19,7 +19,7 @@ main =
 	--runTestTT semanticTests
 
 	print("Interpreter Tests: ")
-	runTestTT InterpreterTests
+	runTestTT interpreterTests
 
 
 
