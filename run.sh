@@ -16,6 +16,6 @@ if [ -x company ]; then
     fi
 else
     #no company
-    echo "Misery Loves company please run make and check the README file"
+    printf "Misery Loves company please run make and check the README file\n"
 fi
 
