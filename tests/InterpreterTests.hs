@@ -17,9 +17,13 @@ filt input = filter (/= '\n') input
 
 --res input = createProcess (proc "./run.sh" [input])
 --res :: IO -> String
-res = readProcess "./run.sh" ["1"] --(proc "./run.sh" ["1"]) -- >>= \s -> print s
+--res = readProcess "./run.sh" ["1"] --(proc "./run.sh" ["1"]) -- >>= \s -> print s
 --    in r   -- let r = "poo"
 
+-- | could possibly do with System.IO.Unsafe - apparently IO String --> is bad :(
+--      I think will import and call the functions directly.
+
+res = "2"
 
 -- | Tests 
 
@@ -27,8 +31,8 @@ res = readProcess "./run.sh" ["1"] --(proc "./run.sh" ["1"]) -- >>= \s -> print 
 -- Correct factorial program being passed 3 as int param
 test0 = TestCase (do
 		input <- readFile "tests/input/interTest0.txt"
-		expected <- readFile "tests/expected/interTest0.txt" 
-        --result <- createProcess (proc "./run.sh" ["3 1"]) 
+		expected <- readFile "tests/expected/interTest0.txt"
+        --put code here...
 		assertEqual "Factorial(3)"  {-"7" Run Company input 3 -} res expected) 
 
 
