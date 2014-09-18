@@ -14,7 +14,8 @@ data Vars = Vars [Id]
 data Args = Args [Id]
           deriving Show
 
-type Block = [Statement]
+data Block = Block [Statement]
+           deriving Show
 
 data Statement = Assign Id Exp
                | If Id Block

@@ -70,7 +70,7 @@ Variables   : {-empty-}                             { Vars []               } --
 IdList      : IdProd                                { [$1]                  } 
             | IdProd ',' IdList                     { $1 : $3               }
 
-Block       : BEGIN Statements END                  { $2                    }
+Block       : BEGIN Statements END                  { Block $2              }
 
 Statements  : {-empty-}                             { []                    } -- Epsilon
             | Statement ';' Statements              { $1 : $3               }

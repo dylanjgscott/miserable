@@ -12,7 +12,7 @@ Lexer.hs: Misery.x
 Parser.hs: Misery.y
 	$(PARSER) -iParser.info -o $@ $<
 
-misery: Misery.hs Lexer.hs Parser.hs Semantic.hs
+misery: Misery.hs Lexer.hs Parser.hs Semantic.hs Generator.hs
 	$(HC) --make -o $@ $<
 
 tester: Tester.hs ParserTests.hs LexerTests.hs
