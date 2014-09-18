@@ -27,12 +27,12 @@ buildBlocks (Block b) n =
                       (If id exp) -> ["if"] : buildInstructions ss
                       (IfElse id exp1 exp2) -> ["ifelse"] : buildInstructions ss
                       (Return id) -> ["return"] : buildInstructions ss
-        buildMoreBlocks :: [Statement] -> Integer -> [Block]
+        buildMoreBlocks :: [Statement] -> Integer -> [ExeBlock]
         buildMoreBlocks [] _ = []
         buildMoreBlocks (s:ss) n =
             case s of (Assign id exp) -> buildMoreBlocks ss n
-                      (If id b) -> buildBlocks b (n+1) : buildMoreBlocks ss (n+2)
-                      (IfElse id b1 b2) -> buildBlocks b1 (n+1) : buildBlocks b2 (n+2): buildMoreBlocks ss (n+3)
+                      (If id b) -> buildBlocks b n ++ buildMoreBlocks ss n
+                      (IfElse id b1 b2) -> buildBlocks b1 n ++ buildBlocks b2 n ++ buildMoreBlocks ss n
                       (Return id) -> buildMoreBlocks ss n
     in 
-        (n, buildInstructions b) ++ buildMoreBlocks b (n+1)
+        (n, buildInstructions b) : buildMoreBlocks b n
