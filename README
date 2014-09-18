@@ -1,5 +1,5 @@
 ----------------------------------------------------
-Misery <3 Company - A Haskell Compiler/Interpretor Front-End
+Misery <3 Company - A Compiler/Interpretor Front-End
 ----------------------------------------------------
 COMP3109 - Sem 2 2014
 Assignment 2
@@ -41,7 +41,7 @@ Compilation and execution
 
 Misery and Company can be compiled with the 'make' command in the root directory
 
-The unit testing suite can be compiled and run with the 'make test' command
+The unit testing suite can be compiled and run with the 'make test' command. See tools note below for further information
 
 -------------------------
 Languages, Tools and Version Numbers
@@ -51,7 +51,10 @@ Haskell ghc 7.4.1
 Happy 1.18.9
 Alex 3.0.1
 
-..anymore...
+For testing to work:
+
+Haskell Testing Framework:
+HUnit 1.2.5.2  
 
 
 
