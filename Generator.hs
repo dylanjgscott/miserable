@@ -16,7 +16,8 @@ genProgram = map genFunction
 genFunction :: Function -> ExeFunction
 genFunction (Function id (Args args) _ block) = (id, args, buildBlocks block 0)
 
--- need to be able to find blocks within statements
+-- There are some issues keeping track of block numbers
+-- When calling buildBlocks twice for IfElse the numbering goes out the window.
 buildBlocks :: Block -> Integer -> [ExeBlock]
 buildBlocks (Block b) n =
     let
@@ -31,8 +32,8 @@ buildBlocks (Block b) n =
         buildMoreBlocks [] _ = []
         buildMoreBlocks (s:ss) n =
             case s of (Assign id exp) -> buildMoreBlocks ss n
-                      (If id b) -> buildBlocks b n ++ buildMoreBlocks ss n
-                      (IfElse id b1 b2) -> buildBlocks b1 n ++ buildBlocks b2 n ++ buildMoreBlocks ss n
+                      (If id b) -> buildBlocks b (n+1) ++ buildMoreBlocks ss n
+                      (IfElse id b1 b2) -> buildBlocks b1 (n+1) ++ buildBlocks b2 (n+2) ++ buildMoreBlocks ss n
                       (Return id) -> buildMoreBlocks ss n
     in 
-        (n, buildInstructions b) : buildMoreBlocks b n
+        (n, buildInstructions b) : buildMoreBlocks b (n)
