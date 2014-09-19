@@ -1,8 +1,11 @@
 module ParserTests where
 
-
+--- package files
+import TestLib 
 import Parser
 import Lexer
+
+--- Third party Libraries
 import Test.HUnit
 import Control.Exception
 import Control.Monad
@@ -21,30 +24,6 @@ import Control.Monad
 --
 --
 -----------------------------
--- | Helper functions
-
--- Output function
-realOut input = show (calc (alexScanTokens input)) 
-
--- Strip newlines from input file
-filt input = filter (/= '\n') input
-
-
-
-
--- HUnit does not have an 'assertException or simmilar so need to make one
-assertException :: (Exception e, Eq e) => e -> IO a -> IO ()
-assertException ex action =
-    handleJust isWanted (const $return ()) $ do
-        action
-        assertFailure $ "Expected exception: " ++ show ex
-    where isWanted = guard . (== ex)
-
-
--- Need an instance decleration so I can pass a String in for the Error type
-instance Eq ErrorCall where
-    x == y = (show x) == (show y)
-
 
 --Define Tests
 
@@ -58,7 +37,7 @@ test0 = TestCase (do
 test1 = TestCase (do
             input <- readFile "tests/input/parse1.txt"
             expected <- readFile "tests/expected/parse_out1.txt"
-            assertException (ErrorCall "Syntax Error.") (print (calc (alexScanTokens input))))
+            assertException (ErrorCall "Syntax Error.") (evaluate (calc (alexScanTokens input))))
 --            assertRaises "Syntax Error" (calc (alexScanTokens input)))
 
 test2 = TestCase ( do
