@@ -19,21 +19,25 @@ genFunction (Function id (Args args) _ block) = (id, args, buildBlocks block 0)
 -- There are some issues keeping track of block numbers
 -- When calling buildBlocks twice for IfElse the numbering goes out the window.
 buildBlocks :: Block -> Integer -> [ExeBlock]
-buildBlocks (Block b) n =
+buildBlocks (Block s:xs) n =
     let
-        buildInstructions :: [Statement] -> [ExeInstruction]
-        buildInstructions [] = []
-        buildInstructions (s:ss) =
-            case s of (Assign id exp) -> ["assign"] : buildInstructions ss
-                      (If id exp) -> ["if"] : buildInstructions ss
-                      (IfElse id exp1 exp2) -> ["ifelse"] : buildInstructions ss
-                      (Return id) -> ["return"] : buildInstructions ss
-        buildMoreBlocks :: [Statement] -> Integer -> [ExeBlock]
-        buildMoreBlocks [] _ = []
-        buildMoreBlocks (s:ss) n =
-            case s of (Assign id exp) -> buildMoreBlocks ss n
-                      (If id b) -> buildBlocks b (n+1) ++ buildMoreBlocks ss n
-                      (IfElse id b1 b2) -> buildBlocks b1 (n+1) ++ buildBlocks b2 (n+2) ++ buildMoreBlocks ss n
-                      (Return id) -> buildMoreBlocks ss n
+        buildBlock :: Statment -> ([ExeInstruction], [ExeBlock])
+        buildBlock (Assign id exp) = 
+          (instructs ++ buildAssign id (reg), [])
+          where (reg, instructs) = buildExpression exp
+
+        buildBlock (Return id) = (buildReturn id, [])
+
+        buildBlock (If cond block) = 
+          (buildCond + instructs, blocks)
+          where (instructs, blocks) = buildBlocks block n
+
+        buildBlock (IfElse cond block1 block2) = 
+          (buildCond cond + instructs1 + instructs2, blocks1 + block2)
+          where
+            (instructs1, blocks1) = buildBlocks block1 n
+            (instructs2, blocks2) = buildBlocks block2 n + length(blocks1)
     in 
-        (n, buildInstructions b) : buildMoreBlocks b (n)
+        (n, wholeBlock) : blocks ++ buildBlocks xs (n + 1 + length(blocks))
+        where
+          wholeBlock, blocks = buildBlock s
