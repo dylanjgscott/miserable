@@ -58,10 +58,10 @@ noMainDefined p = True --TODO
 
 
 --  Two variables and/or function arguments with the same name: "Error: variable '<variable name>' redefined."
--- Return   True - id repeated
---          Fallse -> no repeats
-repeatId :: Program -> Bool
-repeatId p = True --TODO
+-- Return   True - id repeated + String -> id in question
+--          False -> no repeats + String -> empty string .. for no real reason
+repeatId :: Program -> (Bool, String)
+repeatId p = (True, "TODO")
 
 
 
@@ -70,11 +70,11 @@ repeatId p = True --TODO
 
 
 --  Undefined Variable:  "Error: variable '<variable name>' undefined."
---  Return True -> undefined Var exists
+--  Return True -> undefined Var exists + String -> id in question
 --         False -> no undefined bools
 --  what about every case???? 
-undefinedVar :: Program -> Bool
-undefinedVar p = True
+undefinedVar :: Program -> (Bool, String)
+undefinedVar p = (True, "TODO")
 
 
 
@@ -86,27 +86,28 @@ undefinedVar p = True
 
 
 --  Mismatching number of arguments at function call: "Error: function '<function name>' expects <n> argument(s)."
---  Return  True -> wrong number of args
+--  Return  True -> wrong number of args + String Function Name + String -> num args as strings
 --          False -> all is well
-argMismatch :: Program -> Bool
-argMismatch p = True
+argMismatch :: Program -> (Bool, (String, String))
+argMismatch p = (True, ("TODO", "9000"))
+
 
 
 
 
 --  Two functions with the same name: "Error: '<function name>' redefined."
---  Return  True -> Two functions with same name exist
+--  Return  True -> Two functions with same name exist + String -> repeated name
 --          False -> no repeats
-repeatFuncName :: Program -> Bool
-repeatFuncName p = True
+repeatFuncName :: Program -> (Bool, String)
+repeatFuncName p = (True, "TODO")
 
 
 
 --  Undefined Function: "Error: function '<function name>' undefined."
---  Return  True -> undefined function exists
+--  Return  True -> undefined function exists + String name
 --          False -> no repeats
-undefinedFunc :: Program -> Bool
-undefinedFunc p = True
+undefinedFunc :: Program -> (Bool, String)
+undefinedFunc p = (True, "TODO")
 
 
 
@@ -123,7 +124,7 @@ undefinedFunc p = True
 
 
 
-
+vv = "BARRY"
 
 -- List Version
 --
@@ -132,11 +133,11 @@ undefinedFunc p = True
 semanticCheck :: Program -> [[Char]]
 semanticCheck p = concat [[],
                     [ "Error: No main function defined." | (noMainDefined p)], 
-                    [ "Error: variable '<variable name>' redefined." | (repeatId p)],
-                    [ "Error: function '<function name>' undefined." | (undefinedFunc p)],
-                    [ "Error: function '<function name>' expects <n> argument(s)." | (argMismatch p)],
-                    [ "Error: variable '<variable name>' undefined." | (undefinedVar p)],
-                    [ "Error: '<function name>' redefined." | (repeatFuncName p)]]
+                    [ ("Error: variable " ++  (snd (repeatId p))  ++ " redefined.")  | (fst (repeatId p))],
+                    [ "Error: function " ++ (snd (undefinedFunc p)) ++ " undefined." | (fst (undefinedFunc p))],
+                    [ "Error: function " ++ (fst (snd (argMismatch p))) ++ "  expects " ++ (snd (snd (argMismatch p))) ++ " argument(s)." | (fst (argMismatch p))],
+                    [ "Error: variable " ++ (snd (undefinedVar p))  ++ " undefined." | (fst (undefinedVar p))],
+                    [ "Error: " ++ (snd (repeatFuncName p)) ++ " redefined." | (fst (repeatFuncName p))]]
 
 
 
