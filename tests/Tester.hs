@@ -14,29 +14,29 @@ import Token
 
 main = 
 	do
-	putStr("Misery <3 Company will now run some tests.\n")
+	putStrLn("Misery <3 Company will now run some tests.")
 
-	putStr("------------------------------------------\n")
+	putStrLn("------------------------------------------")
 
-	putStr("Parser Tests: \n")
+	putStrLn("Parser Tests: ")
 	runTestTT parserTests
 		
-	putStr("------------------------------------------\n")
+	putStrLn("------------------------------------------")
 
-	putStr("Lexer tests: \n")
+	putStrLn("Lexer tests: ")
 	runTestTT lexerTests
 
-	putStr("------------------------------------------\n")
+	putStrLn("------------------------------------------")
 
-	putStr("Semantic Tests: \n")
+	putStrLn("Semantic Tests: ")
 	runTestTT semanticTests
 
-	putStr("------------------------------------------\n")
+	putStrLn("------------------------------------------")
 
-	putStr("Interpreter Tests: \n")
+	putStrLn("Interpreter Tests: ")
 	runTestTT interpreterTests
 
-	print("Testing Complete.")
+	putStrLn("Testing Complete.")
 
 
 
