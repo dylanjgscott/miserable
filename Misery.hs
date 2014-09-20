@@ -10,6 +10,8 @@ import Parser
 import Lexer
 import Token
 import Generator
+import Semantic
+
 
 -- 
 main :: IO ()
@@ -19,9 +21,14 @@ main
 
         -- Read in the source file.
         source          <- readFile fileName
-
-  
-
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
-        putStr (showProgram (genProgram (calc (alexScanTokens source))))
+		prog <- (calc(alexScanToken source))
+		-- Check semantics of program
+		if (senanticCheck prog)
+			then putStr(ShowProgram(genProgram(prog)))
+			else exitFailure
+		--putStr (showProgram (genProgram (calc (alexScanTokens source))))
+        --print (calc (alexScanTokens source))
+
+        putStr(unlines (semanticCheck(calc (alexScanTokens source))))
