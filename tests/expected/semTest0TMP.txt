@@ -1,0 +1,2 @@
+[Function "main" (Args ["n"]) (Vars ["tmp"]) [Assign "tmp" (ExpNum 1),Return "tmp"]]
+["Error: No main function defined.","Error: variable '<variable name>' redefined.","Error: function '<function name>' undefined.","Error: function '<function name>' expects <n> argument(s).","Error: variable '<variable name>' undefined.","Error: '<function name>' redefined."]

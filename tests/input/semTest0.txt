@@ -1,0 +1,7 @@
+FUNCTION main(n)
+VARS tmp;
+BEGIN
+    tmp = 1;
+    RETURN tmp;
+END
+
