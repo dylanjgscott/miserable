@@ -63,10 +63,13 @@ isMain (Function name _ _ _) = if name == "main" then True else False
 repeatId :: Program -> (Bool, String)
 repeatId p = (False, "TODO")
 
+-- get all vars and args in a function
+-- check for duplicates
+-- return if true
+-- could be multiple...
 
-
-
-
+--just add both function and var id to the list to check for duplicates.
+-- need to think about this...
 
 
 -------------------------------------------------------------------------
@@ -78,7 +81,10 @@ repeatId p = (False, "TODO")
 undefinedVar :: Program -> (Bool, String)
 undefinedVar p = (False, "TODO")
 
-
+-- in each function
+-- get Vars
+-- check if assign occurs - return with error
+-- could be multipl.
 
 
 
@@ -95,10 +101,22 @@ undefinedVar p = (False, "TODO")
 argMismatch :: Program -> (Bool, (String, String))
 argMismatch p = (False, ("TODO", "9000"))
 
+-- List of all functions + num args
+-- look at each call + compare - return true + name + num
+
+getFunctionArgs :: Program -> [(String, String)] -- -> [(String, Int)]
+getFunctionArgs (f:fs) = [(getFuncArgs f)] ++ getFunctionArgs fs
 
 
+getFuncArgs :: Function -> (String, String)
+getFuncArgs (Function name args vars _ ) = ((show name), (show (lenArgs args)))
 
 
+lenArgs :: Args -> Int
+lenArgs (Args ids) = length ids
+
+lenVars :: Vars -> Int
+lenVars (Vars ids) = length ids
 -------------------------------------------------------------------------
 --  Two functions with the same name: "Error: '<function name>' redefined."
 --  Return  True -> Two functions with same name exist + String -> repeated name
@@ -106,6 +124,10 @@ argMismatch p = (False, ("TODO", "9000"))
 -------------------------------------------------------------------------
 repeatFuncName :: Program -> (Bool, String)
 repeatFuncName p = (False, "TODO")
+
+-- Create list of all functions
+-- look for duplicates - return true + names
+
 
 
 
@@ -116,6 +138,12 @@ repeatFuncName p = (False, "TODO")
 -------------------------------------------------------------------------
 undefinedFunc :: Program -> (Bool, String)
 undefinedFunc p = (False, "TODO")
+
+-- Create a list if functions
+-- look through eah function body for a function...
+-- if yes pass back Truw + name
+
+
 
 
 
@@ -145,7 +173,7 @@ semanticCheck p = concat [[],
                     [ "Error: variable " ++ (snd (undefinedVar p))  ++ " undefined." | (fst (undefinedVar p))],
                     [ "Error: " ++ (snd (repeatFuncName p)) ++ " redefined." | (fst (repeatFuncName p))]]
 
-
+-- can wrap calling functions and build an array to pass back.
 
 
 
