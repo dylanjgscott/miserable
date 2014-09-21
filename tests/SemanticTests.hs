@@ -26,12 +26,11 @@ import Control.Monad
 
 -- the Factorial case from the assignement
 test0 = TestCase (do
-			input <- readFile "tests/input/fact1.txt"
-			--expected ... todo
-			assertEqual "Factorial(n) from pdf: " (semanticCheck (calc (alexScanTokens input))) True)
-
-
+			--input <- readFile "tests/input/fact1.txt"
+            assertEqual "dummy test: " True False)
+		    --expected ... todo
+			--assertEqual "Factorial(n) from pdf: " (semanticCheck (calc (alexScanTokens input))) True)
 
 -- | Pass to the tester
-semanticTests = TestList [TestLabel "test0" test0]
+semanticTests = TestList [TestLabel " test0" test0]
 

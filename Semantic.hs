@@ -40,28 +40,28 @@ import Program
 
 
 
-
+-------------------------------------------------------------------------
 --  If a program does not define main: "Error: No main function defined."
 --  Return: True -> no main
 --          False -> main
+------------------------------------------------------------------------
 noMainDefined :: Program -> Bool
-noMainDefined p = True --TODO
---mainDefined (Program x) = hasMain x
+noMainDefined [] = True
+noMainDefined (f:fs) = if isMain f then False else noMainDefined fs
 
---hasMain :: Functions -> Bool
---hasMain EmptyFunctions = False
---hasMain (Functions f fs) = if isMain f then True else hasMain fs
-
---isMain :: Function -> Bool
---isMain (Function (Id name) _ _ _) = if name == "main" then True else False
+-- Check's the individual function for it's name
+isMain :: Function -> Bool
+isMain (Function name _ _ _) = if name == "main" then True else False
 
 
-
+-------------------------------------------------------------------------
 --  Two variables and/or function arguments with the same name: "Error: variable '<variable name>' redefined."
 -- Return   True - id repeated + String -> id in question
 --          False -> no repeats + String -> empty string .. for no real reason
+-------------------------------------------------------------------------
+
 repeatId :: Program -> (Bool, String)
-repeatId p = (True, "TODO")
+repeatId p = (False, "TODO")
 
 
 
@@ -69,12 +69,14 @@ repeatId p = (True, "TODO")
 
 
 
+-------------------------------------------------------------------------
 --  Undefined Variable:  "Error: variable '<variable name>' undefined."
 --  Return True -> undefined Var exists + String -> id in question
 --         False -> no undefined bools
 --  what about every case???? 
+-------------------------------------------------------------------------
 undefinedVar :: Program -> (Bool, String)
-undefinedVar p = (True, "TODO")
+undefinedVar p = (False, "TODO")
 
 
 
@@ -85,29 +87,35 @@ undefinedVar p = (True, "TODO")
 
 
 
+-------------------------------------------------------------------------
 --  Mismatching number of arguments at function call: "Error: function '<function name>' expects <n> argument(s)."
 --  Return  True -> wrong number of args + String Function Name + String -> num args as strings
 --          False -> all is well
+-------------------------------------------------------------------------
 argMismatch :: Program -> (Bool, (String, String))
-argMismatch p = (True, ("TODO", "9000"))
+argMismatch p = (False, ("TODO", "9000"))
 
 
 
 
 
+-------------------------------------------------------------------------
 --  Two functions with the same name: "Error: '<function name>' redefined."
 --  Return  True -> Two functions with same name exist + String -> repeated name
 --          False -> no repeats
+-------------------------------------------------------------------------
 repeatFuncName :: Program -> (Bool, String)
-repeatFuncName p = (True, "TODO")
+repeatFuncName p = (False, "TODO")
 
 
 
+-------------------------------------------------------------------------
 --  Undefined Function: "Error: function '<function name>' undefined."
 --  Return  True -> undefined function exists + String name
 --          False -> no repeats
+-------------------------------------------------------------------------
 undefinedFunc :: Program -> (Bool, String)
-undefinedFunc p = (True, "TODO")
+undefinedFunc p = (False, "TODO")
 
 
 
@@ -123,8 +131,6 @@ undefinedFunc p = (True, "TODO")
 --semanticCheck p = False 
 
 
-
-vv = "BARRY"
 
 -- List Version
 --
