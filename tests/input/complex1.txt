@@ -19,6 +19,16 @@ BEGIN
     IF cond THEN
         BEGIN
             big = (first + 5);
+            cond = (big > second);
+            IF cond THEN
+                BEGIN
+                    RETURN big;
+                END
+            ELSE
+                BEGIN
+                    big = (big - 5);
+                END
+            ;
             RETURN big;
         END;
     cond = (first > second);
