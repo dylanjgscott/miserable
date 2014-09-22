@@ -8,8 +8,8 @@ type ExeFunction = (ExeId, [ExeId], [ExeBlock])
 type ExeBlock = (ExeBlockId, [ExeInstruction])
 type ExeInstruction = [String]
 type ExeId = String
-type ExeBlockId = Integer
-type ExeRegister = Integer
+type ExeBlockId = Int
+type ExeRegister = Int
 
 
 -- maps generated functions from the ast function list
@@ -28,9 +28,11 @@ buildBlocks :: Block -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])
 buildBlocks (Block blk) n reg = 
   let
     (retReg, instructs, blocks) = buildBlock blk (n+1) reg
-    comb (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
+
+    agrigator (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
       where (nexReg, tmpBlocks) = next accReg
-    finalBlocks = (foldl comb (retReg, []) blocks)
+
+    finalBlocks = (foldl agrigator (retReg, []) blocks)
   in
     (fst finalBlocks, (n, instructs) : snd finalBlocks)
   
@@ -56,13 +58,15 @@ buildBlock (s:xs) n reg =
         (retReg + 1, condInstr, [blocks1, blocks2])
         where
           -- lazily store blocks until entire previous block is generated
-          blocks1 = buildBlocks block1 n
-          blocks2 = buildBlocks block2 (n + 1)
-          (retReg, condInstr) = buildCond cond n (n + 1) reg
+          ref1 = n
+          ref2 = n + 1
+          blocks1 = buildBlocks block1 ref1
+          blocks2 = buildBlocks block2 ref2
+          (retReg, condInstr) = buildCond cond ref1 ref2 reg
 
     -- Recurse through remaining statements to gather remaining instructions
     -- Also store Dependant blocks
-    (lastReg, restInstructs, restBlocks) = buildBlock xs (n + (fromIntegral . length $ blocks)) nextReg
+    (lastReg, restInstructs, restBlocks) = buildBlock xs (n + (length blocks)) nextReg
   in
     -- Group all functions for this block together
     (lastReg, instructs ++ restInstructs, blocks ++ restBlocks)
