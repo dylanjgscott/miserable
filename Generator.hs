@@ -19,7 +19,7 @@ genProgram = map genFunction
 -- Generated a function recursively from the ast --
 genFunction :: Function -> ExeFunction
 genFunction (Function idr (Args args) _ block) =
-   (idr, args, fixRegs (buildBlocks block 0))
+   (idr, args, buildBlocks block 0)
 
 -- Simple wrapper function to partition the boundary of blocks --
 buildBlocks :: Block -> ExeBlockId -> [ExeBlock]
