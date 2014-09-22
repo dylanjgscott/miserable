@@ -21,6 +21,8 @@ main
 
         -- Read in the source file.
         source          <- readFile fileName
+        --print(semanticCheck(calc (alexScanTokens source)))
+
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
 		prog <- (calc(alexScanToken source))
@@ -31,4 +33,3 @@ main
 		--putStr (showProgram (genProgram (calc (alexScanTokens source))))
         --print (calc (alexScanTokens source))
 
-        putStr(unlines (semanticCheck(calc (alexScanTokens source))))
