@@ -14,7 +14,7 @@ genProgram :: Program -> ExeProgram
 genProgram = map genFunction
 
 genFunction :: Function -> ExeFunction
-genFunction (Function id (Args args) _ block) = (id, args, buildBlocks block 0)
+genFunction (Function idr (Args args) _ block) = (idr, args, buildBlocks block 0)
 
 -- There are some issues keeping track of block numbers
 -- When calling buildBlocks twice for IfElse the numbering goes out the window.
@@ -32,9 +32,6 @@ buildBlock (s:xs) n =
         (instructs ++ buildAssign idr reg, [])
         where (reg, instructs) = buildExpression expr
       (Return idr) -> (buildReturn idr, [])
-      (If cond block) -> 
-        ((buildCond cond (fst (head blks)) (-1)), blocks)
-        where blks = buildBlocks block n
       (IfElse cond block1 block2) -> 
         (buildCond cond (fst (head blocks1)) (fst (head blocks2)), blocks1 ++ blocks2)
         where
@@ -47,9 +44,9 @@ buildBlock (s:xs) n =
 
 buildExpression :: Exp -> (ExeRegister, [ExeInstruction])
 buildExpression (ExpNum x) = (reg, [["lc", show reg, show x]]) where reg = 0
-buildExpression (ExpId x) = (reg, [["ld", show reg, show x]]) where reg = 0
+buildExpression (ExpId x) = (reg, [["ld", show reg, x]]) where reg = 0
 buildExpression (ExpFun name args) = 
-  (reg, argInstructs ++ [["call", show reg, show name] ++ (map show argRegs)])
+  (reg, argInstructs ++ [["call", show reg, name] ++ (map show argRegs)])
   where
     (argRegs, argInstructs) = loadArgs args
     reg = 0
@@ -76,7 +73,7 @@ loadArgs (Args args) =
 
 buildAssign :: Id -> ExeRegister -> [ExeInstruction]
 buildAssign idr reg =
-  [["st", show idr, show reg]]
+  [["st", idr, show reg]]
 
 buildCond :: Id -> ExeBlockId -> ExeBlockId -> [ExeInstruction]
 buildCond idr block1 block2 =

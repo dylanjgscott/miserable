@@ -18,7 +18,6 @@ data Block = Block [Statement]
            deriving Show
 
 data Statement = Assign Id Exp
-               | If Id Block
                | IfElse Id Block Block
                | Return Id
                deriving Show
@@ -40,4 +39,12 @@ data Op = OpAdd
         | OpLT
         | OpGT
         | OpEq
-        deriving Show
+
+instance Show Op where
+  show OpAdd = "add"
+  show OpSub = "sub"
+  show OpMul = "mul"
+  show OpDiv = "div"
+  show OpLT  = "lt"
+  show OpGT  = "gt"
+  show OpEq  = "eq"
