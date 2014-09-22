@@ -1,0 +1,39 @@
+FUNCTION sum(a, b)
+VARS ret;
+BEGIN
+    ret = (a + b);
+    RETURN ret;
+END
+
+FUNCTION biggestPlus5(first, second)
+VARS big, cond;
+BEGIN
+    cond = (first == second);
+    IF cond THEN
+        BEGIN
+            big = (first + 5);
+            RETURN big;
+        END;
+    cond = (first > second);
+    IF cond THEN
+        BEGIN
+            big = first;
+            RETURN big;
+        END
+    ELSE
+        BEGIN
+            big = second;
+            RETURN second;
+        END;
+END
+
+FUNCTION main(n)
+VARS tmp1, tmp2, ret;
+BEGIN
+    tmp1 = 10;
+    tmp2 = 15;
+    tmp1 = sum(tmp1, tmp2);
+    ret = biggestPlus5(tmp1, tmp2);
+    RETURN ret;
+END
+

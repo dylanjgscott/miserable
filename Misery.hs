@@ -24,4 +24,4 @@ main
 
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
-        print (genProgram (calc (alexScanTokens source)))
+        putStr (showProgram (genProgram (calc (alexScanTokens source))))

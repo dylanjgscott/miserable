@@ -1,6 +1,7 @@
 module Generator where
 
 import Program
+import Data.List
 
 type ExeProgram = [ExeFunction]
 type ExeFunction = (ExeId, [ExeId], [ExeBlock])
@@ -19,6 +20,41 @@ genFunction (Function idr (Args args) _ block) =
 
 fixRegs :: [ExeBlock] -> [ExeBlock]
 fixRegs blocks = blocks
+
+showReg :: ExeRegister -> String
+showReg reg = "r" ++ show reg
+
+showProgram :: ExeProgram -> String
+showProgram prog =  "( "
+                 ++ intercalate "\n  " (map showFunction prog)
+                 ++ " )\n"
+
+showFunction :: ExeFunction -> String
+showFunction (name, args, blocks) =  "("
+                  ++ name
+                  ++ " "
+                  ++ showArgs args
+                  ++ "\n    "
+                  ++ showBlocks blocks
+                  ++ " )"
+
+showArgs :: [Id] -> String
+showArgs args =  "("
+              ++ intercalate " " args
+              ++ ")"
+
+showBlocks :: [ExeBlock] -> String
+showBlocks blocks = intercalate "\n    " (map showBlock blocks)
+
+showBlock :: ExeBlock -> String
+showBlock (blkId, instructs) =  "( "
+                            ++ show blkId
+                            ++ " "
+                            ++ intercalate "\n        " (map showInstruct instructs)
+                            ++ " )"
+
+showInstruct :: ExeInstruction -> String
+showInstruct instruct = "(" ++ intercalate " " instruct ++ ")"
 
 -- There are some issues keeping track of block numbers
 -- When calling buildBlocks twice for IfElse the numbering goes out the window.
@@ -51,10 +87,10 @@ buildBlock (s:xs) n reg =
     (instructs ++ restInstructs, blocks ++ restBlocks)
 
 buildExpression :: Exp -> ExeRegister -> (ExeRegister, [ExeInstruction])
-buildExpression (ExpNum x) reg = (reg, [["lc", show reg, show x]])
-buildExpression (ExpId x) reg = (reg, [["ld", show reg, x]])
+buildExpression (ExpNum x) reg = (reg, [["lc", showReg reg, show x]])
+buildExpression (ExpId x) reg = (reg, [["ld", showReg reg, x]])
 buildExpression (ExpFun name args) reg = 
-  ((retReg), argInstructs ++ [["call", show (retReg), name] ++ (map show argRegs)])
+  ((retReg), argInstructs ++ [["call", showReg (retReg), name] ++ (map showReg argRegs)])
   where
     (argRegs, argInstructs) = loadArgs args reg
     retReg = (last argRegs) + 1 
@@ -62,9 +98,9 @@ buildExpression (ExpOp op expr1 expr2) reg =
   (retReg, expr1Instructs ++
         expr2Instructs ++
         [[show op,
-          show retReg,
-          show expr1reg,
-          show expr2reg]])
+          showReg retReg,
+          showReg expr1reg,
+          showReg expr2reg]])
   where
     (expr1reg, expr1Instructs) = buildExpression expr1 reg
     (expr2reg, expr2Instructs) = buildExpression expr2 (expr1reg + 1)
@@ -85,14 +121,14 @@ loadArgs (Args args) reg =
 
 buildAssign :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
 buildAssign idr reg =
-  (reg, [["st", idr, show reg]])
+  (reg, [["st", idr, showReg reg]])
 
 buildCond :: Id -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction])
 buildCond idr block1 block2 reg =
-  (retReg, idInstr ++ [["br", show retReg, show block1, show block2]])
+  (retReg, idInstr ++ [["br", showReg retReg, show block1, show block2]])
   where (retReg, idInstr) = buildExpression (ExpId idr) reg
 
 buildReturn :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
 buildReturn idr reg =
-  (retReg, (instructs ++ [["ret", show retReg]]))
+  (retReg, (instructs ++ [["ret", showReg retReg]]))
   where (retReg, instructs) = buildExpression (ExpId idr) reg
