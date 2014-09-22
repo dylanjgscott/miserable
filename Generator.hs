@@ -95,7 +95,7 @@ loadArgs (Args args) reg =
         reg = ((last regAcc) + 1)
         (nextReg, inst) = buildExpression (ExpId expression) reg
 
-    (argRegs, argInstr) = foldl combineArgs ([reg],[]) args
+    (argRegs, argInstr) = foldl combineArgs ([reg-1],[]) args
   in
     (tail argRegs, argInstr)
 
