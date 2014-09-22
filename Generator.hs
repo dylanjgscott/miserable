@@ -12,27 +12,35 @@ type ExeBlockId = Integer
 type ExeRegister = Integer
 
 
--- maps generated functions from the ast function list --
+-- maps generated functions from the ast function list
 genProgram :: Program -> ExeProgram
 genProgram = map genFunction
 
--- Generated a function recursively from the ast --
+-- Generated a function recursively from the ast
 genFunction :: Function -> ExeFunction
 genFunction (Function idr (Args args) _ block) =
-   (idr, args, buildBlocks block 0)
+   (idr, args, blocks)
+   where (_, blocks) = buildBlocks block 0 1
 
--- Simple wrapper function to partition the boundary of blocks --
-buildBlocks :: Block -> ExeBlockId -> [ExeBlock]
-buildBlocks (Block blk) n = 
-  (n, instructs) : blocks
-  where (instructs, blocks) = buildBlock blk n 1
+-- wrapper function to partition the boundary of blocks
+-- contains an agrigator to generate the remaining blocks
+buildBlocks :: Block -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])
+buildBlocks (Block blk) n reg = 
+  let
+    (retReg, instructs, blocks) = buildBlock blk (n+1) reg
+    comb (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
+      where (nexReg, tmpBlocks) = next accReg
+    finalBlocks = (foldl comb (retReg, []) blocks)
+  in
+    (fst finalBlocks, (n, instructs) : snd finalBlocks)
+  
 
 
 -- Block builder, performs preorder traversal of as to produce a single block,
 -- as well as a list of all child blocks (i.e. blocks that branch from this one)
 -- the tricky part is ensuring consistent block naming
-buildBlock :: [Statement] -> ExeBlockId -> ExeRegister -> ([ExeInstruction], [ExeBlock])
-buildBlock [] n reg = ([], [])
+buildBlock :: [Statement] -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction], [ExeRegister -> (ExeRegister, [ExeBlock])])
+buildBlock [] n reg = (reg, [], [])
 buildBlock (s:xs) n reg =
   let
   -- Match on each statement and generate appropriate instructions
@@ -45,18 +53,19 @@ buildBlock (s:xs) n reg =
       (Return idr) -> (retReg + 1, retInstr, [])
         where (retReg, retInstr) = buildReturn idr reg
       (IfElse cond block1 block2) -> 
-        (retReg + 1, condInstr, blocks1 ++ blocks2)
+        (retReg + 1, condInstr, [blocks1, blocks2])
         where
+          -- lazily store blocks until entire previous block is generated
           blocks1 = buildBlocks block1 n
-          blocks2 = buildBlocks block2 (n + (fromIntegral . length $ blocks1))
-          (retReg, condInstr) = buildCond cond (fst (head blocks1)) (fst (head blocks2)) reg
+          blocks2 = buildBlocks block2 (n + 1)
+          (retReg, condInstr) = buildCond cond n (n + 1) reg
 
     -- Recurse through remaining statements to gather remaining instructions
     -- Also store Dependant blocks
-    (restInstructs, restBlocks) = buildBlock xs (n + 1 + (fromIntegral . length $ blocks)) nextReg
+    (lastReg, restInstructs, restBlocks) = buildBlock xs (n + (fromIntegral . length $ blocks)) nextReg
   in
     -- Group all functions for this block together
-    (instructs ++ restInstructs, blocks ++ restBlocks)
+    (lastReg, instructs ++ restInstructs, blocks ++ restBlocks)
 
 -- 
 buildExpression :: Exp -> ExeRegister -> (ExeRegister, [ExeInstruction])
