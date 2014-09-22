@@ -7,14 +7,18 @@ type ExeFunction = (ExeId, [ExeId], [ExeBlock])
 type ExeBlock = (ExeBlockId, [ExeInstruction])
 type ExeInstruction = [String]
 type ExeId = String
-type ExeRegister = Integer
 type ExeBlockId = Integer
+type ExeRegister = Integer
 
 genProgram :: Program -> ExeProgram
 genProgram = map genFunction
 
 genFunction :: Function -> ExeFunction
-genFunction (Function idr (Args args) _ block) = (idr, args, buildBlocks block 0)
+genFunction (Function idr (Args args) _ block) =
+   (idr, args, fixRegs (buildBlocks block 0))
+
+fixRegs :: [ExeBlock] -> [ExeBlock]
+fixRegs blocks = blocks
 
 -- There are some issues keeping track of block numbers
 -- When calling buildBlocks twice for IfElse the numbering goes out the window.
