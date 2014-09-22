@@ -20,17 +20,19 @@ genProgram = map genFunction
 genFunction :: Function -> ExeFunction
 genFunction (Function idr (Args args) _ block) =
    (idr, args, blocks)
-   where (_, blocks) = buildBlocks block 0 1
+   where (_, blocks) = buildBlocks block 0 0 1
 
 -- wrapper function to partition the boundary of blocks
 -- contains an agrigator to generate the remaining blocks
-buildBlocks :: Block -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])
-buildBlocks (Block blk) n reg = 
+buildBlocks :: Block -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])
+buildBlocks (Block blk) n dep reg = 
   let
-    (retReg, instructs, blocks) = buildBlock blk (n+1) reg
-
+    (retReg, instructs, blocks) = buildBlock blk (dep + 1) reg
     agrigator (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
-      where (nexReg, tmpBlocks) = next accReg
+      where 
+        dep = length acc + length blocks
+        (nexReg, tmpBlocks) = next dep accReg
+
 
     finalBlocks = (foldl agrigator (retReg, []) blocks)
   in
@@ -41,7 +43,7 @@ buildBlocks (Block blk) n reg =
 -- Block builder, performs preorder traversal of as to produce a single block,
 -- as well as a list of all child blocks (i.e. blocks that branch from this one)
 -- the tricky part is ensuring consistent block naming
-buildBlock :: [Statement] -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction], [ExeRegister -> (ExeRegister, [ExeBlock])])
+buildBlock :: [Statement] -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction], [ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])])
 buildBlock [] n reg = (reg, [], [])
 buildBlock (s:xs) n reg =
   let
