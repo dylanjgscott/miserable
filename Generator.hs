@@ -28,11 +28,11 @@ buildBlocks :: Block -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister,
 buildBlocks (Block blk) n dep reg = 
   let
     (retReg, instructs, blocks) = buildBlock blk (dep + 1) reg
+
     agrigator (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
       where 
-        dep = length acc + length blocks
-        (nexReg, tmpBlocks) = next dep accReg
-
+        dep2 = length acc + length blocks
+        (nexReg, tmpBlocks) = next dep2 accReg
 
     finalBlocks = (foldl agrigator (retReg, []) blocks)
   in
@@ -54,8 +54,10 @@ buildBlock (s:xs) n reg =
         where
           (nextReg, instructs) = buildExpression expr reg
           (retReg, asgnInstr) = buildAssign idr nextReg
+
       (Return idr) -> (retReg + 1, retInstr, [])
         where (retReg, retInstr) = buildReturn idr reg
+        
       (IfElse cond block1 block2) -> 
         (retReg + 1, condInstr, [blocks1, blocks2])
         where
