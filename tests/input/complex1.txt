@@ -5,6 +5,13 @@ BEGIN
     RETURN ret;
 END
 
+FUNCTION noArgs()
+VARS ret;
+BEGIN
+    ret = 4;
+    RETURN ret;
+END
+
 FUNCTION biggestPlus5(first, second)
 VARS big, cond;
 BEGIN
@@ -33,6 +40,7 @@ BEGIN
     tmp1 = 10;
     tmp2 = 15;
     tmp1 = sum(tmp1, tmp2);
+    tmp2 = noArgs();
     ret = biggestPlus5(tmp1, tmp2);
     RETURN ret;
 END

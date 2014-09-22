@@ -82,7 +82,7 @@ buildExpression (ExpFun name args) reg =
   ((retReg), argInstructs ++ [["call", showReg (retReg), name] ++ (map showReg argRegs)])
   where
     (argRegs, argInstructs) = loadArgs args reg
-    retReg = (last argRegs) + 1 
+    retReg = if (not (null argRegs)) then (last argRegs) + 1 else reg
 
 -- Recursively build all required instructions for an expression
 -- perpend them to the final expression
