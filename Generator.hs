@@ -14,34 +14,35 @@ genProgram :: Program -> ExeProgram
 genProgram = map genFunction
 
 genFunction :: Function -> ExeFunction
-genFunction (Function id (Args args) _ block) = (id, args, (0, instructs) : blocks)
-  where (instructs, blocks) = buildBlocks block 0
+genFunction (Function id (Args args) _ block) = (id, args, buildBlocks block 0)
 
 -- There are some issues keeping track of block numbers
 -- When calling buildBlocks twice for IfElse the numbering goes out the window.
-buildBlocks :: Block -> Integer -> ([ExeInstruction], [ExeBlock])
-buildBlocks (Block (s:xs)) n =
-  let 
-    (wholeBlock, blocks) = case s of
+buildBlocks :: Block -> Integer -> [ExeBlock]
+buildBlocks (Block blk) n = 
+  (n, instructs) : blocks
+  where (instructs, blocks) = buildBlock blk n
+
+buildBlock :: [Statement] -> Integer -> ([ExeInstruction], [ExeBlock])
+buildBlock [] n = ([], [])
+buildBlock (s:xs) n =
+  let
+    (instructs, blocks) = case s of
       (Assign id exp) -> 
         (instructs ++ buildAssign id (reg), [])
         where (reg, instructs) = buildExpression exp
       (Return id) -> (buildReturn id, [])
       (If cond block) -> 
-        (buildCond cond ++ instructs, blocks)
-        where (instructs, blocks) = buildBlocks block n
+        (buildCond cond, buildBlocks block n)
       (IfElse cond block1 block2) -> 
-        (buildCond cond ++ instructs1 ++ instructs2, blocks1 ++ blocks2)
+        (buildCond cond, blocks1 ++ blocks2)
         where
-          (instructs1, blocks1) = buildBlocks block1 n
-          (instructs2, blocks2) = buildBlocks block2 (n + (fromIntegral . length $ blocks1))
+          blocks1 = buildBlocks block1 n
+          blocks2 = buildBlocks block2 (n + (fromIntegral . length $ blocks1))
 
-    (restBlock, restBlocks) = case xs of 
-       [] -> ([], [])
-       xs' -> buildBlocks (Block xs') (n + 1 + (fromIntegral . length $ blocks))
-  in 
-    (wholeBlock ++ restBlock,  blocks ++ restBlocks) 
-          
+    (restInstructs, restBlocks) = buildBlock xs (n + 1 + (fromIntegral . length $ blocks))
+  in
+    (instructs ++ restInstructs, blocks ++ restBlocks)
 
 buildCond _ = [["cond"]]
 buildAssign _ _= [["assign"]]
