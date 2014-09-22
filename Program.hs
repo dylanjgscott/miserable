@@ -3,34 +3,18 @@ module Program where
 -- TODO Use list instead of custom Cons
 -- NOTE This is pretty gross.
 
-data Program = Program Functions
-             deriving Show
-
-data Functions = EmptyFunctions
-               | Functions Function Functions
-              deriving Show
+type Program = [Function]
 
 data Function = Function Id Args Vars Block
               deriving Show
 
-data Vars = VarsEmpty
-          | Vars IdList
+data Vars = Vars [Id]
           deriving Show
 
-data Args = ArgsEmpty
-          | Args IdList
+data Args = Args [Id]
           deriving Show
 
-data IdList = IdListSingle Id
-            | IdList Id IdList
-            deriving Show
-
-data Block = Block Statements
-           deriving Show
-
-data Statements = EmptyStatements
-                | Statements Statement Statements
-                deriving Show
+type Block = [Statement]
 
 data Statement = Assign Id Exp
                | If Id Block
@@ -44,11 +28,9 @@ data Exp = ExpNum Program.Num
          | ExpOp Op Exp Exp
          deriving Show
 
-data Num = Num Int
-           deriving Show
+type Num = Int
 
-data Id = Id String
-        deriving Show
+type Id = String
 
 data Op = OpAdd
         | OpSub

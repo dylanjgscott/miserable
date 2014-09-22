@@ -1,17 +1,25 @@
 LEXER=alex
 PARSER=happy
 HC=ghc
+TEST=tests
+VPATH = tests
 
-all: Miserable
+all: misery
 
-Lexer.hs: Miserable.x
+Lexer.hs: Misery.x
 	$(LEXER) -o $@ $<
 
-Parser.hs: Miserable.y
+Parser.hs: Misery.y
 	$(PARSER) -iParser.info -o $@ $<
 
-Miserable: Miserable.hs Lexer.hs Parser.hs Semantic.hs
+misery: Misery.hs Lexer.hs Parser.hs Semantic.hs
 	$(HC) --make -o $@ $<
+
+tester: Tester.hs ParserTests.hs LexerTests.hs
+	$(HC) --make -o $(TEST)/$@ $< -itests/
+
+test: misery tester
+	$(TEST)/tester
 
 clean:
 	rm -f Token.hi Token.o
@@ -19,4 +27,10 @@ clean:
 	rm -f Semantic.hi Semantic.o
 	rm -f Lexer.hs Lexer.hi Lexer.o
 	rm -f Parser.info Parser.hs Parser.hi Parser.o
-	rm -f Miserable.hi Miserable.o Miserable
+	rm -f Misery.hi Misery.o misery
+	rm -f $(TEST)/Tester.hi $(TEST)/Tester.o $(TEST)/tester
+	rm -f $(TEST)/LexerTests.hi $(TEST)/LexerTests.o
+	rm -f $(TEST)/ParserTests.hi $(TEST)/ParserTests.o
+	rm -f $(TEST)/SemanticTests.hi $(TEST)/SemanticTests.o
+
+	
