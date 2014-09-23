@@ -18,6 +18,6 @@ END
 FUNCTION main(n)
 VARS tmp;
 BEGIN
-	tmp = factorial(foo);
+	tmp = myfunc(n);
 	RETURN tmp;
 END
