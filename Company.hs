@@ -4,6 +4,7 @@ import Data.Char
 import System.Environment
 
 import AsmLexer
+import AsmParser
 
 -- 
 main :: IO ()
@@ -18,4 +19,4 @@ main
 
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
-        putStr (show (alexScanTokens source))
+        putStr (show (asmParse (alexScanTokens source)))
