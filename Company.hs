@@ -18,4 +18,4 @@ main
 
   
 
-        putStr (show (runProgram (asmParse (alexScanTokens source)) ([("n", 3)], [])))
+        putStr (show (runProgram (asmParse (alexScanTokens source)) ([("n", 4)], [])))
