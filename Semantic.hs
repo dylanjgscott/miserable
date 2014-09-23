@@ -79,7 +79,7 @@ getDeclaredVars f   = (getFuncArgs f) ++ (getFuncVars f)
 
 -- | Get List of used Vars.
 getFuncUsedVars                         :: Function -> [Id]
-getFuncUsedVars (Function _ _ _ block)  = getBlocks_UsedVars block
+getFuncUsedVars (Function _ _ _ (Block statements))  = getBlocks_UsedVars statements
 
 -- | Get List of Blocks used in a function  - note block = [Statement]
 getBlocks_UsedVars          :: [Statement] -> [Id]
@@ -88,7 +88,7 @@ getBlocks_UsedVars _        = []
 
 -- | Get List of Vars used in an individual block
 getBlockUsedVars          :: Statement -> [Id]
-getBlockUsedVars s        = (getAssignVars s) ++ (getIfId s) ++ (getIfElseVars s) ++ (getReturnId s)
+getBlockUsedVars s        = (getAssignVars s) ++ (getIfElseVars s) ++ (getReturnId s)
                             -- Done                 Done            Done                Done
 -- | Get all assigned vars in a block
 getAssignVars                   :: Statement -> [Id]
@@ -115,13 +115,13 @@ getExpOpVars (ExpOp _ e1 e2)    = (getExpVars e1) ++ (getExpVars e2)
 getExpOpVars _                  = []
 
 -- | Get all the vars from an If expression
-getIfId                 :: Statement -> [Id]
-getIfId (If id block)   = [id] ++ (getBlocks_UsedVars block)
-getIfId _               = []
+--getIfId                 :: Statement -> [Id]
+--getIfId (If id block)   = [id] ++ (getBlocks_UsedVars block)
+--getIfId _               = []
 
 -- | Get all the vars from an IfElse expression
 getIfElseVars                   :: Statement -> [Id]
-getIfElseVars (IfElse id b1 b2) = [id] ++ (getBlocks_UsedVars b1) ++ (getBlocks_UsedVars b2)  
+getIfElseVars (IfElse id (Block b1) (Block b2)) = [id] ++ (getBlocks_UsedVars b1) ++ (getBlocks_UsedVars b2)  
 getIfElseVars _                 = []
 
 -- | Get the returned Id 
@@ -163,7 +163,7 @@ getFuncDef (Function id args _ _)	= [(id, (lenArgs args))]
 
 -- | Get the funtion id's and list of args for called functions within a function.
 getFuncCalls						:: Function -> [(Id, Int)]
-getFuncCalls (Function _ _ _ block)	= getFuncCalls_Blocks block  
+getFuncCalls (Function _ _ _ (Block block))	= getFuncCalls_Blocks block  
 --getFuncCalls _						= []
 -- | Get the function calls within a block
 getFuncCalls_Blocks			:: [Statement] -> [(Id, Int)]
@@ -172,7 +172,7 @@ getFuncCalls_Blocks _		= []
 
 -- | Get the function calls at the single Statement level
 getFuncCallsBlock			:: Statement -> [(Id, Int)]
-getFuncCallsBlock s			= (getFuncCallsAssign s) ++ (getFuncCallsIf s) ++ (getFuncCallsIfElse s)
+getFuncCallsBlock s			= (getFuncCallsAssign s) ++ (getFuncCallsIfElse s)
 								-- Done						Done					Done
 -- | Get Function calls within an Assignment
 getFuncCallsAssign					:: Statement -> [(Id, Int)]
@@ -195,13 +195,13 @@ getExpOpCalls (ExpOp _ e1 e2)	= (getFuncCallExp e1) ++ (getFuncCallExp e2)
 getExpOpCalls _					= []
 
 -- | Get function calls in an IF
-getFuncCallsIf					:: Statement -> [(Id, Int)]
-getFuncCallsIf (If _ block)		= getFuncCalls_Blocks block
-getFuncCallsIf _				= []
+--getFuncCallsIf					:: Statement -> [(Id, Int)]
+--getFuncCallsIf (If _ block)		= getFuncCalls_Blocks block
+--getFuncCallsIf _				= []
 
 -- Get any function calls from an ifelse
 getFuncCallsIfElse					:: Statement -> [(Id, Int)]
-getFuncCallsIfElse (IfElse _ b1 b2)	= (getFuncCalls_Blocks b1) ++ (getFuncCalls_Blocks b2)
+getFuncCallsIfElse (IfElse _ (Block b1) (Block b2))	= (getFuncCalls_Blocks b1) ++ (getFuncCalls_Blocks b2)
 getFuncCallsIfElse _				= []
 
 -- | Return the number of arguments in a given args list of Ids

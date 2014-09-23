@@ -5,7 +5,7 @@
 --import miserable_parser
 import Data.Char
 import System.Environment
-
+import System.Exit
 import Parser
 import Lexer
 import Token
@@ -25,11 +25,8 @@ main
 
         -- Lex, parse and print result to the console,
         -- use the alex generated lexer.
-		prog <- (calc(alexScanToken source))
-		-- Check semantics of program
-		if (senanticCheck prog)
-			then putStr(ShowProgram(genProgram(prog)))
-			else exitFailure
-		--putStr (showProgram (genProgram (calc (alexScanTokens source))))
-        --print (calc (alexScanTokens source))
-
+        --prog <- (calc(alexScanToken source))
+        -- Check semantics of program
+        if (semanticCheck (calc (alexScanTokens source)))
+            then putStr (showProgram (genProgram (calc (alexScanTokens source))))
+            else exitFailure
