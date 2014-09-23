@@ -1,7 +1,11 @@
 Lexer.hs
 Parser.hs
+AsmLexer.hs
+AsmParser.hs
 Parser.info
+AsmParser.info
 *.o
 *.hi
 misery
+company
 tests/tester
