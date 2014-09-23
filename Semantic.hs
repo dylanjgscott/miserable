@@ -2,43 +2,8 @@ module Semantic where
 
 -- From Package
 import Program
-
-
 -- Other Modules
 import Data.List -- nub, \\ and other list functions
-
-
-
--------------------------------------------------------------
---  All the Errors to catch:
---
---  Undefined Function:
---  "Error: function '<function name>' undefined."
---
---  Two functions with the same name:
---  "Error: '<function name>' redefined."
---
---  Mismatching number of arguments at function call
---  "Error: function '<function name>' expects <n> argument(s)."
---
---  Undefined Variable
---  "Error: variable '<variable name>' undefined."
---
---  Two variables and/or function arguments with the same name:
---  "Error: variable '<variable name>' redefined."
---
---  If a program does not define main:
---  "Error: No main function defined."
---
---  Syntax Error *** caught by Parser
---  "Syntax Error."
---
---
---
---  Returning a list of errors for now - might change to exceptions - need to check with rest of group..
----------------------------------------------------------
-
-
 
 -------------------------------------------------------------------------
 --  If a program does not define main: "Error: No main function defined."
@@ -53,13 +18,11 @@ noMainDefined (f:fs)    = if isMain f then "" else noMainDefined fs
 isMain                          :: Function -> Bool
 isMain (Function name _ _ _)    = if name == "main" then True else False
 
-
 -------------------------------------------------------------------------
 -- Two variables and/or function arguments with the same name: "Error: variable '<variable name>' redefined."
 -- Return   True - return Error strings containing name of all repeat IDs
 --          False -> empty error string
 -------------------------------------------------------------------------
-
 repeatId        :: Program -> [Char]
 repeatId []     = ""            -- Can't have repeat Id's in an empty program!!
 repeatId (f:fs) = "" ++ (getFuncRepeatIdErrors f) ++ (repeatId fs) -- recurse to get error from all functions
@@ -68,19 +31,17 @@ repeatId (f:fs) = "" ++ (getFuncRepeatIdErrors f) ++ (repeatId fs) -- recurse to
 getFuncRepeatIdErrors   :: Function -> [Char]
 getFuncRepeatIdErrors f = unlines (map (++ "' redefined.") (map ("Error: variable '" ++) (getRepeatIds f)))
 
-
 -- | Get all the duplicats Ids
 getRepeatIds    :: Function -> [Id]
 getRepeatIds f  = ((getFuncArgs f) ++ (getFuncVars f)) \\ (nub ((getFuncArgs f) ++ (getFuncVars f)))
 
 -- | Get Args for a a function
-getFuncArgs                         :: Function -> [Id]     --getFuncArgs nil = []
+getFuncArgs                         :: Function -> [Id]
 getFuncArgs (Function _ args _ _)   = getArgIds args
 
 -- | Get Id list for an arg
-getArgIds               :: Args -> [Id]             --getArgIds nil = [] Not sure why this raises a warning...
+getArgIds               :: Args -> [Id]         
 getArgIds (Args ids)    = ids
-
 
 -- | Get Vars for a function
 getFuncVars                         :: Function -> [Id]
@@ -100,20 +61,10 @@ getVarIds (Vars ids)    = ids
 undefinedVar :: Program -> [Char]
 undefinedVar [] = ""
 undefinedVar (f:fs) = "" ++ (getUndefinedVarsErrors f) ++ (undefinedVar fs)
---TODO
 
--- in each function
---      A: list of all declared Vars (including function param????)
---      B: list of all:
---                  in each statement - list of all ids /= ExpFn Id
---      Then:
---          [Declared] \\ [Statements]
--- could be multipl.
+-- | Generated the error String
 getUndefinedVarsErrors      :: Function -> [Char]
 getUndefinedVarsErrors f    = unlines (map (++ "' undefined.") (map("Error: variable '" ++)(getFuncUndefinedVars f)))
-
-
-
 
 -- | Get List of used vars that have not been declared.
 getFuncUndefinedVars   :: Function -> [Id]
@@ -142,10 +93,7 @@ getBlockUsedVars s        = (getAssignVars s) ++ (getIfId s) ++ (getIfElseVars s
 -- | Get all assigned vars in a block
 getAssignVars                   :: Statement -> [Id]
 getAssignVars (Assign id exp)   = [id] ++ (getExpVars exp)
---getAssignVars (Assign _ exp)    = (getExpVars exp)          -- This line should be redundant.
---getAssignVars (Assign id _)     = [id]                      -- THis line should also be redundant.
 getAssignVars _                 = []
-
 
 -- | Get all the vars in an expression
 getExpVars      :: Exp -> [Id]
@@ -171,7 +119,6 @@ getIfId                 :: Statement -> [Id]
 getIfId (If id block)   = [id] ++ (getBlocks_UsedVars block)
 getIfId _               = []
 
-
 -- | Get all the vars from an IfElse expression
 getIfElseVars                   :: Statement -> [Id]
 getIfElseVars (IfElse id b1 b2) = [id] ++ (getBlocks_UsedVars b1) ++ (getBlocks_UsedVars b2)  
@@ -188,59 +135,81 @@ getReturnId _           = [] --should never happen...
 -------------------------------------------------------------------------
 argsMismatch :: Program -> [Char] ---(Bool, (String, String))
 argsMismatch [] = ""
-argsMismatch p = "" --"Error: function '<function name>' expects <n> argument(s).\n"
+argsMismatch p = "" ++ (genArgsMismatchError p)--"Error: function '<function name>' expects <n> argument(s).\n"
 
+-- | Map function for error String composition
+argMismatchString	:: (Id, Int) -> [Char] 
+argMismatchString (id, int)	= ("Error: function '" ++ id ++ "' expects " ++ (show int) ++ " argument(s).") 
 
+-- | Generate the erros String
+genArgsMismatchError	:: Program -> [Char]
+genArgsMismatchError p	= unlines (map (argMismatchString) (getArgsMismatch p)) 
+-- | Get the erroneous calls
+getArgsMismatch		:: Program -> [(Id, Int)]
+getArgsMismatch p	= (nub (getProgFuncCalls p)) \\ (getProgFuncDefs p)
 
 -- | Get list of tuples of function definitions and number of args
 getProgFuncDefs			:: Program -> [(Id, Int)]
 getProgFuncDefs	(f:fs)	= (getFuncDef f) ++ (getProgFuncDefs fs)
-
+getProgFuncDefs _		= []
 -- | Get list of all called functions and the number of args passed to each
 getProgFuncCalls		:: Program -> [(Id, Int)]
 getProgFuncCalls (f:fs)	= (getFuncCalls f) ++ (getProgFuncCalls fs)
-
+getProgFuncCalls _		= []
 -- | Get the Id and number of arguments of a given function
 getFuncDef							:: Function -> [(Id, Int)]
-getFuncDef (Function id args _ _)	= [(Id, (lenArgs args)]
-getFuncDef _						= []
+getFuncDef (Function id args _ _)	= [(id, (lenArgs args))]
+--getFuncDef _						= []
 
 -- | Get the funtion id's and list of args for called functions within a function.
 getFuncCalls						:: Function -> [(Id, Int)]
 getFuncCalls (Function _ _ _ block)	= getFuncCalls_Blocks block  
-getFuncCalls _						= []
+--getFuncCalls _						= []
 -- | Get the function calls within a block
 getFuncCalls_Blocks			:: [Statement] -> [(Id, Int)]
 getFuncCalls_Blocks (b:bs)	= (getFuncCallsBlock b) ++ (getFuncCalls_Blocks bs)	
-getFuncCalls_Block _		= []
+getFuncCalls_Blocks _		= []
 
 -- | Get the function calls at the single Statement level
 getFuncCallsBlock			:: Statement -> [(Id, Int)]
 getFuncCallsBlock s			= (getFuncCallsAssign s) ++ (getFuncCallsIf s) ++ (getFuncCallsIfElse s)
-								-- TODO						TODO					TODO
+								-- Done						Done					Done
 -- | Get Function calls within an Assignment
 getFuncCallsAssign					:: Statement -> [(Id, Int)]
 getFuncCallsAssign (Assign _ exp)	= getFuncCallExp exp
 getFuncCallsAssign _				= []
 
+-- | Get Function Calls in Exp
+getFuncCallExp		:: Exp -> [(Id, Int)]
+getFuncCallExp e	= (getExpFuncCalls e) ++ (getExpOpCalls e)
 
 
--- List of all functions + num args
--- look at each call + compare - return true + name + num
+-- | Get the id and args from function calls
+getExpFuncCalls						:: Exp -> [(Id, Int)]
+getExpFuncCalls (ExpFun id args)	= [(id, (lenArgs args))]
+getExpFuncCalls _					= []
 
---getFunctionArgs :: Program -> [(String, String)] -- -> [(String, Int)]
---getFunctionArgs (f:fs) = [(getFuncArgs f)] ++ getFunctionArgs fs
+-- | Get ExpOp function calls
+getExpOpCalls					:: Exp -> [(Id, Int)]
+getExpOpCalls (ExpOp _ e1 e2)	= (getFuncCallExp e1) ++ (getFuncCallExp e2)
+getExpOpCalls _					= []
 
+-- | Get function calls in an IF
+getFuncCallsIf					:: Statement -> [(Id, Int)]
+getFuncCallsIf (If _ block)		= getFuncCalls_Blocks block
+getFuncCallsIf _				= []
 
---getFuncArgs :: Function -> (String, String)
---getFuncArgs (Function name args vars _ ) = ((show name), (show (lenArgs args)))
+-- Get any function calls from an ifelse
+getFuncCallsIfElse					:: Statement -> [(Id, Int)]
+getFuncCallsIfElse (IfElse _ b1 b2)	= (getFuncCalls_Blocks b1) ++ (getFuncCalls_Blocks b2)
+getFuncCallsIfElse _				= []
 
 -- | Return the number of arguments in a given args list of Ids
 lenArgs :: Args -> Int
-lenArgs (Args ids) = length ids
+lenArgs (Args ids) = length ids 
 
 
-
+-- | Not sure I need...
 lenVars :: Vars -> Int
 lenVars (Vars ids) = length ids
 -------------------------------------------------------------------------
@@ -250,13 +219,24 @@ lenVars (Vars ids) = length ids
 -------------------------------------------------------------------------
 repeatFuncName :: Program -> [Char]
 repeatFuncName [] = ""
-repeatFuncName p = ""--"Error: '<function name>' redefined.\n"
+repeatFuncName p = "" ++ (genRepeatFuncErrors p)--"Error: '<function name>' redefined.\n"
 
--- Create list of all functions
--- look for duplicates - return true + names
+-- | Generate the Error string
+genRepeatFuncErrors		:: Program -> [Char]
+genRepeatFuncErrors p	= unlines (map (++ "' redefined.") (map ("Error: function '" ++)(getRepeatFuncIds p)))
 
+-- | Get list of repeated Functions
+getRepeatFuncIds	:: Program -> [Id]
+getRepeatFuncIds p	= (getProgFuncIds p) \\ (nub (getProgFuncIds p))
 
+-- | Get list of function Ids
+getProgFuncIds			:: Program -> [Id]
+getProgFuncIds	(f:fs)	= (getFuncId f) ++ (getProgFuncIds fs)
+getProgFuncIds _		= []
 
+-- | Get the Id a given function
+getFuncId							:: Function -> [Id]
+getFuncId (Function id _ _ _)	= [id]
 
 -------------------------------------------------------------------------
 --  Undefined Function: "Error: function '<function name>' undefined."
@@ -267,13 +247,19 @@ undefinedFunc :: Program -> [Char]
 undefinedFunc [] = ""
 undefinedFunc p = "" --"Error: function '<function name>' undefined.\n"
 
+-- | Generate the Error String
+genUndefinedFuncErrors	:: Program -> [Char]
+genUndefinedFuncErrors p = unlines (map (++ "' undefined.") (map ("Error: function '" ++)(getUndefinedFuncErrors p)))
 
--- Create a list if functions
--- look through eah function body for a function...
--- if yes pass back Truw + name
+-- | Get all the bad IDs
+getUndefinedFuncErrors	:: Program -> [Id]
+getUndefinedFuncErrors p = (nub (getListofCalledFuncIds (getProgFuncCalls p))) \\ (getProgFuncIds p)
 
+getListofCalledFuncIds			:: [(Id, Int)] -> [Id]
+getListofCalledFuncIds []		= []
+getListofCalledFuncIds (l:ls)	= (fst l) : (getListofCalledFuncIds ls)
 
-
+-- [(Id, Int)]
 
 
 ---------------------------------------------------------------
@@ -288,9 +274,6 @@ semanticCheck p = if (null (getSemanticErrors p))
                     then True 
                     else (semanticError (getSemanticErrors p))
 
-
-
-
 -- | Get the error string if they exist 
 getSemanticErrors :: Program -> [Char]
 getSemanticErrors [] = "Error: empty file..."                       -- Empty program...
@@ -298,14 +281,10 @@ getSemanticErrors p = ""
                     ++ (noMainDefined p)           -- Working - not tested
                     ++ (undefinedFunc p)           -- TODO
                     ++ (repeatFuncName p)          -- TODO
-                    ++ (argsMismatch p)            -- TODO
+                    ++ (argsMismatch p)            -- Working - not tested
                     ++ (undefinedVar p)            -- Working - not tested
                     ++ (repeatId p)                -- Working - not tested
---"TEST ERROR\n" ++ "MORE TEST ERRORS\n"
-
-
 -- | Error function to call if we fund an error
-
 semanticError :: [Char] -> a
 semanticError err = error ("\n" ++ err) --Newline to ensure we start erros on a fresh line. 
 
