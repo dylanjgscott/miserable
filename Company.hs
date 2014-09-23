@@ -5,6 +5,7 @@ import System.Environment
 
 import AsmLexer
 import AsmParser
+import Interpreter
 
 -- 
 main :: IO ()
@@ -17,6 +18,4 @@ main
 
   
 
-        -- Lex, parse and print result to the console,
-        -- use the alex generated lexer.
-        putStr (show (asmParse (alexScanTokens source)))
+        putStr (show (runProgram (asmParse (alexScanTokens source)) ([("n", 3)], [])))
