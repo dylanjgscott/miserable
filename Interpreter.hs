@@ -6,9 +6,6 @@ type RegisterState = [(AsmReg, AsmNum)]
 type MemoryState = [(AsmId, AsmNum)]
 type MachineState = (MemoryState, RegisterState)
 
--- Clearly I am not a Haskell programmer.
--- This is a huge mess but I think it will work.
-
 runProgram :: AsmProgram -> MachineState -> Integer
 runProgram p s = runFunction p "main" s
     where
@@ -37,7 +34,6 @@ runProgram p s = runFunction p "main" s
                         (AsmEq reg1 reg2 reg3) -> runInstructions is (setReg reg1 (if ((getReg reg2 s) == (getReg reg3 s)) then 1 else 0) s)
                         (AsmBr reg b1 b2) -> if reg == 0 then runBlock blocks b2 s else runBlock blocks b1 s
                         (AsmRet r) -> getReg r s
-                        -- I think there is a bug in the code below.
                         (AsmCall reg id regs) ->
                             let
                                 func = findFunction p id
