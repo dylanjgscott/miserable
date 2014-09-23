@@ -1,16 +1,30 @@
 module Assembly where
 
-data Instruction = LoadCon Reg Integer
-                 | LoadIns Reg Id
-                 | Store Id Reg
-                 | Add Reg Reg Reg
-                 | Sub Reg Reg Reg
-                 | Mul Reg Reg Reg
-                 | LessThan Reg Reg Reg
-                 | GreaterThan Reg Reg Reg
-                 | Equal Reg Reg Reg
-                 | Branch Reg Integer Integer
-                 | Return Reg
-                 | Call Id [Reg]
+type AsmProgram = [AsmFunction]
 
-type Reg = Integer
+data AsmFunction = AsmFunction AsmId [AsmId] [AsmBlock]
+                 deriving (Show, Eq)
+
+data AsmBlock = AsmBlock AsmNum [AsmInstruction]
+              deriving (Show, Eq)
+
+data AsmInstruction = AsmLc AsmReg AsmNum
+                    | AsmLd AsmReg AsmId
+                    | AsmSt AsmId AsmReg
+                    | AsmAdd AsmReg AsmReg AsmReg
+                    | AsmSub AsmReg AsmReg AsmReg
+                    | AsmMul AsmReg AsmReg AsmReg
+                    | AsmDiv AsmReg AsmReg AsmReg
+                    | AsmLt AsmReg AsmReg AsmReg
+                    | AsmGt AsmReg AsmReg AsmReg
+                    | AsmEq AsmReg AsmReg AsmReg
+                    | AsmBr AsmReg AsmNum AsmNum
+                    | AsmRet AsmReg
+                    | AsmCall AsmReg AsmId [AsmReg]
+                    deriving (Show, Eq)
+
+type AsmNum = Integer
+
+type AsmReg = Integer
+
+type AsmId = String
