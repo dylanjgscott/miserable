@@ -191,6 +191,40 @@ argsMismatch [] = ""
 argsMismatch p = "" --"Error: function '<function name>' expects <n> argument(s).\n"
 
 
+
+-- | Get list of tuples of function definitions and number of args
+getProgFuncDefs			:: Program -> [(Id, Int)]
+getProgFuncDefs	(f:fs)	= (getFuncDef f) ++ (getProgFuncDefs fs)
+
+-- | Get list of all called functions and the number of args passed to each
+getProgFuncCalls		:: Program -> [(Id, Int)]
+getProgFuncCalls (f:fs)	= (getFuncCalls f) ++ (getProgFuncCalls fs)
+
+-- | Get the Id and number of arguments of a given function
+getFuncDef							:: Function -> [(Id, Int)]
+getFuncDef (Function id args _ _)	= [(Id, (lenArgs args)]
+getFuncDef _						= []
+
+-- | Get the funtion id's and list of args for called functions within a function.
+getFuncCalls						:: Function -> [(Id, Int)]
+getFuncCalls (Function _ _ _ block)	= getFuncCalls_Blocks block  
+getFuncCalls _						= []
+-- | Get the function calls within a block
+getFuncCalls_Blocks			:: [Statement] -> [(Id, Int)]
+getFuncCalls_Blocks (b:bs)	= (getFuncCallsBlock b) ++ (getFuncCalls_Blocks bs)	
+getFuncCalls_Block _		= []
+
+-- | Get the function calls at the single Statement level
+getFuncCallsBlock			:: Statement -> [(Id, Int)]
+getFuncCallsBlock s			= (getFuncCallsAssign s) ++ (getFuncCallsIf s) ++ (getFuncCallsIfElse s)
+								-- TODO						TODO					TODO
+-- | Get Function calls within an Assignment
+getFuncCallsAssign					:: Statement -> [(Id, Int)]
+getFuncCallsAssign (Assign _ exp)	= getFuncCallExp exp
+getFuncCallsAssign _				= []
+
+
+
 -- List of all functions + num args
 -- look at each call + compare - return true + name + num
 
@@ -201,9 +235,11 @@ argsMismatch p = "" --"Error: function '<function name>' expects <n> argument(s)
 --getFuncArgs :: Function -> (String, String)
 --getFuncArgs (Function name args vars _ ) = ((show name), (show (lenArgs args)))
 
-
+-- | Return the number of arguments in a given args list of Ids
 lenArgs :: Args -> Int
 lenArgs (Args ids) = length ids
+
+
 
 lenVars :: Vars -> Int
 lenVars (Vars ids) = length ids
