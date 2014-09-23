@@ -11,11 +11,6 @@ $alpha =      [a-zA-Z]
 tokens :-
 
     $white+                 ;
-    \-?$digit+              { \s -> AsmTokenNum (read s) }
-    r[1-9]$digit*           { \s -> AsmTokenReg (read (tail s)) }
-    $alpha[$alpha$digit]*   { \s -> AsmTokenId s }
-    \(                      { \s -> AsmTokenParenOpen }
-    \)                      { \s -> AsmTokenParenClose }
     lc                      { \s -> AsmTokenLc }
     ld                      { \s -> AsmTokenLd }
     st                      { \s -> AsmTokenSt }
@@ -29,3 +24,8 @@ tokens :-
     br                      { \s -> AsmTokenBr }
     ret                     { \s -> AsmTokenRet }
     call                    { \s -> AsmTokenCall }
+    \-?$digit+              { \s -> AsmTokenNum (read s) }
+    r[1-9]$digit*           { \s -> AsmTokenReg (read (tail s)) }
+    $alpha[$alpha$digit]*   { \s -> AsmTokenId s }
+    \(                      { \s -> AsmTokenParenOpen }
+    \)                      { \s -> AsmTokenParenClose }

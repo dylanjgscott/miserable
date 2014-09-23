@@ -18,7 +18,10 @@ misery: Misery.hs Lexer.hs Parser.hs Semantic.hs Generator.hs
 AsmLexer.hs: Company.x
 	$(LEXER) -o $@ $<
 
-company: Company.hs AsmLexer.hs
+AsmParser.hs: Company.y
+	$(PARSER) -iAsmParser.info -o $@ $<
+
+company: Company.hs AsmLexer.hs AsmParser.hs
 	$(HC) --make -o $@ $<
 
 tester: Tester.hs ParserTests.hs LexerTests.hs
