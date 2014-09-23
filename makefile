@@ -49,3 +49,4 @@ clean:
 	rm -f AsmLexer.hs AsmLexer.hi AsmLexer.o
 	rm -f AsmParser.info AsmParser.hs AsmParser.hi AsmParser.o
 	rm -f Company.hi Company.o company
+	rm -f AsmLexer.hs AsmLexer.hi
