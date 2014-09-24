@@ -21,6 +21,7 @@ tokens :-
     lt                      { \s -> AsmTokenLt }
     gt                      { \s -> AsmTokenGt }
     eq                      { \s -> AsmTokenEq }
+    cmp                     { \s -> AsmTokenEq }
     br                      { \s -> AsmTokenBr }
     ret                     { \s -> AsmTokenRet }
     call                    { \s -> AsmTokenCall }
