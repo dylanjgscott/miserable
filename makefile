@@ -24,7 +24,7 @@ AsmParser.hs: Company.y
 company: Company.hs AsmLexer.hs AsmParser.hs Interpreter.hs
 	$(HC) --make -o $@ $<
 
-tester: Tester.hs ParserTests.hs LexerTests.hs InterpreterTests.hs
+tester: Tester.hs ParserTests.hs LexerTests.hs InterpreterTests.hs TestLib.hs
 	$(HC) --make -o $(TEST)/$@ $< -itests/
 
 test: misery company tester
