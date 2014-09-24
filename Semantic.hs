@@ -127,16 +127,31 @@ argsMismatch [] = ""
 argsMismatch p = "" ++ (genArgsMismatchError p)
 
 -- | Map function for error String composition
-argMismatchString	:: (Id, Int) -> [Char]                           {-Int below is wrong - need a "getFuncArgsNum"-}
-argMismatchString (id, int)	= ("Error: function '" ++ id ++ "' expects " ++ (show int) ++ " argument(s).") 
+argMismatchString				:: Program -> (Id, Int) -> [Char]                           {-Int below is wrong - need a "getFuncArgsNum"-}
+argMismatchString p (id, int) 	= ("Error: function '" ++ id ++ "' expects " ++ (show (getRealNumArgs id p)) ++ " argument(s).") 
                                                                     {- Currently passing back the badly called funcs args num :(-}
+
+head'		:: [a] -> a
+head' []	= error "empty list passed in..."
+head' (x:_) = x
+
+-- | Get num args that should have been passed to function
+getRealNumArgs		:: Id -> Program -> Int
+getRealNumArgs id p	=  (snd (head' (filter ((== id).fst) (nub (getProgFuncDefs p)))))
+
 -- | Generate the error String
 genArgsMismatchError	:: Program -> [Char]
-genArgsMismatchError p	= unlines (map (argMismatchString) (getArgsMismatch p)) 
+genArgsMismatchError p	= unlines (map (argMismatchString p) (getArgsMismatch p)) 
+
+
+-- | need to check if function is in list if real functions
+removeUndefinedFuncs		:: Program -> [(Id, Int)] -> [(Id, Int)]
+removeUndefinedFuncs p calledFuncs	= filter (\x -> fst x `elem` getProgFuncIds p) calledFuncs 
+
 
 -- | Get the erroneous calls
 getArgsMismatch		:: Program -> [(Id, Int)]
-getArgsMismatch p	= (nub (getProgFuncCalls p)) \\ (getProgFuncDefs p)
+getArgsMismatch p	= (nub (removeUndefinedFuncs p (getProgFuncCalls p))) \\ (getProgFuncDefs p) -- add nub to get rid of undefined calls
 
 -- | Get list of tuples of function definitions and number of args
 getProgFuncDefs			:: Program -> [(Id, Int)]
@@ -226,7 +241,7 @@ getFuncId (Function id _ _ _)	= [id]
 -------------------------------------------------------------------------
 undefinedFunc :: Program -> [Char]
 undefinedFunc [] = ""
-undefinedFunc p = "" --"Error: function '<function name>' undefined.\n"
+undefinedFunc p = "" ++ (genUndefinedFuncErrors p)
 
 -- | Generate the Error String
 genUndefinedFuncErrors	:: Program -> [Char]
@@ -234,12 +249,12 @@ genUndefinedFuncErrors p = unlines (map (++ "' undefined.") (map ("Error: functi
 
 -- | Get all the bad IDs
 getUndefinedFuncErrors	:: Program -> [Id]
-getUndefinedFuncErrors p = (nub (getListofCalledFuncIds (getProgFuncCalls p))) \\ (getProgFuncIds p)
+getUndefinedFuncErrors p = (nub (getListofFuncIds (getProgFuncCalls p))) \\ (getListofFuncIds (getProgFuncDefs p))
 
 -- | Converts list of function + arg tuples to just Ids... I hope I THINK THIS IS BUGGY ************
-getListofCalledFuncIds			:: [(Id, Int)] -> [Id]
-getListofCalledFuncIds []		= []
-getListofCalledFuncIds (l:ls)	= (fst l) : (getListofCalledFuncIds ls)
+getListofFuncIds			:: [(Id, Int)] -> [Id]
+--getListofCalledFuncIds []		= []
+getListofFuncIds ls		= map fst ls
 
 ---------------------------------------------------------------
 -- Wrapper functions to call from Misery.hs
