@@ -6,16 +6,21 @@ import System.Environment
 import AsmLexer
 import AsmParser
 import Interpreter
+import Assembly
 
 -- 
+
+getAsmArgs :: [String] -> [AsmNum]
+getAsmArgs = (\x -> map read (tail x))
+
 main :: IO ()
 main  
  = do   -- Use the first command-line argument as the file name.
-        [fileName]      <- getArgs
-
-        -- Read in the source file.
-        source          <- readFile fileName
-
-  
-
-        putStr (show (runProgram (asmParse (alexScanTokens source)) ([("n", 4)], [])))
+        args <- getArgs
+        let fileName = head args
+        source <- readFile fileName
+        let asm = asmParse (alexScanTokens source)
+        let asmArgs = getAsmArgs args
+        let main = findFunction asm "main"
+        let state = buildFunctionState main asmArgs
+        print $ runProgram asm state
