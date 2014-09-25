@@ -12,6 +12,11 @@ type ExeBlockId = Int
 type ExeRegister = Int
 
 
+jumpReg = 1
+zeroBlockId = 0
+failBlock = -1
+
+
 -- input         Start Id      Return Id
 type LazyBlock = ExeBlockId -> ExeRegister -> 
 -- return        Next Block  Next Reg     Blocks
@@ -34,8 +39,8 @@ buildBlocks block =
   -- Set the value of register zero to 0
   -- not necessary for the spec, but should
   -- protect badly written interpreters.
-  zeroRegister = ["lc", showReg 0, show 0]
-  zeroBlock = (0, zeroRegister : (buildJump 1))
+  zeroRegister = ["lc", showReg jumpReg, show 0]
+  zeroBlock = (zeroBlockId, zeroRegister : (buildJump 1))
 
   -- Build this block and all children blocks
   -- Currently the return jump at the end of a 
@@ -43,7 +48,11 @@ buildBlocks block =
   -- grammar but if this jump is hit, the interpreter
   -- should crash anyway, as this will only occur
   -- if a functions doesn't return
-  (_, _, blocks) = buildBlocks' block 1 (-1) 2 1 
+  (_, _, blocks) = buildBlocks' block 
+                                (zeroBlockId + 1)
+                                (failBlock)
+                                (zeroBlockId + 2)
+                                (jumpReg + 1)
   in 
     zeroBlock : blocks
 
@@ -144,7 +153,7 @@ buildBlock statement blockId register =
 -- consists of a branch instruction where
 -- both outcomes point to the same location
 buildJump :: ExeBlockId -> [ExeInstruction]
-buildJump target = [["br", showReg 0, show target, show target]]
+buildJump target = [["br", showReg jumpReg, show target, show target]]
 
 -- Recursively build all intructions required for a givn expression
 -- Uses a preorder traversion of the expression tree
