@@ -4,7 +4,7 @@ HC=ghc
 TEST=tests
 VPATH = tests
 
-all: misery
+all: misery company
 
 Lexer.hs: Misery.x
 	$(LEXER) -o $@ $<
@@ -27,7 +27,7 @@ company: Company.hs AsmLexer.hs AsmParser.hs Interpreter.hs
 tester: Tester.hs ParserTests.hs LexerTests.hs InterpreterTests.hs
 	$(HC) --make -o $(TEST)/$@ $< -itests/
 
-test: misery tester
+test: misery company tester
 	$(TEST)/tester
 
 clean:
