@@ -26,9 +26,12 @@ genFunction (Function idr (Args args) _ block) =
 
 buildBlocks :: Block -> [ExeBlock]
 buildBlocks block =
-  blocks
-  where 
-    (_, _, blocks) = buildBlocks' block 0 (-1) 1 1
+  let
+  zeroRegister = ["lc", showReg 0, show 0]
+  zeroBlock = (0, zeroRegister : (buildJump 1))
+  (_, _, blocks) = buildBlocks' block 1 (-1) 2 1 
+  in 
+    zeroBlock : blocks
 
 
 --              Block    Root          Return
