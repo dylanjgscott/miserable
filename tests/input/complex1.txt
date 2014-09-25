@@ -1,15 +1,15 @@
 FUNCTION sum(a, b)
-VARS ret;
+VARS retval;
 BEGIN
-    ret = (a + b);
-    RETURN ret;
+    retval = (a + b);
+    RETURN retval;
 END
 
 FUNCTION noArgs()
-VARS ret;
+VARS retval;
 BEGIN
-    ret = 4;
-    RETURN ret;
+    retval = 4;
+    RETURN retval;
 END
 
 FUNCTION biggestPlus5(first, second)
@@ -45,13 +45,13 @@ BEGIN
 END
 
 FUNCTION main(n)
-VARS tmp1, tmp2, ret;
+VARS tmp1, tmp2, retval;
 BEGIN
     tmp1 = 10;
     tmp2 = 15;
     tmp1 = sum(tmp1, tmp2);
     tmp2 = noArgs();
-    ret = biggestPlus5(tmp1, tmp2);
-    RETURN ret;
+    retval = biggestPlus5(tmp1, tmp2);
+    RETURN retval;
 END
 
