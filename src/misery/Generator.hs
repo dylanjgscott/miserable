@@ -2,7 +2,6 @@ module Generator where
 
 import Program
 import Data.List
-import Data.Maybe
 
 type ExeProgram = [ExeFunction]
 type ExeFunction = (ExeId, [ExeId], [ExeBlock])
@@ -11,6 +10,7 @@ type ExeInstruction = [String]
 type ExeId = String
 type ExeBlockId = Int
 type ExeRegister = Int
+--               Start         Return          Next Block  Next Reg
 type LazyBlock = ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, [ExeBlock])
 
 -- maps generated functions from the ast function list
@@ -28,155 +28,141 @@ buildBlocks :: Block -> [ExeBlock]
 buildBlocks block =
   blocks
   where 
-    (_, _, blocks) = buildBlocks' 0 (-1) block 1 1
+    (_, _, blocks) = buildBlocks' block 0 (-1) 1 1
 
 
---                  Root          Return        Block    Start         Register        FinalBlock  FinalReg     blocks
-buildBlocks' :: ExeBlockId -> ExeBlockId -> Block -> ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, [ExeBlock])
-buildBlocks' rootBlockId returnBlockId (Block statements) start reg =
+--              Block    Root          Return
+buildBlocks' :: Block -> ExeBlockId -> ExeBlockId  -> LazyBlock
+buildBlocks' (Block statements) rootBlockId returnBlockId  start reg =
   let
-    (nextBlockId, _,  rootBlock'   , _) = buildBlock Nothing start reg -- reg not used
-    (_          , _,  returnBlock' , _) = buildBlock Nothing (returnBlockId - 1) reg -- reg not used
+    -- Build root block
+    rootBlock' = buildJump start
+    rootBlock   = (rootBlockId,  rootBlock'  ) -- build actual start block
+    nextBlockId = start + 1
 
+    -- Current block aggrigator
     combine :: (ExeBlockId, ExeRegister, [ExeBlock], [LazyBlock]) -> Statement -> (ExeBlockId, ExeRegister, [ExeBlock], [LazyBlock])
     combine (startBlockId, startReg, blockAcc, superBlockAcc) statement =
       (accBlockId, accRegister, blockAcc ++ [block], superBlockAcc ++ superBlocks)
       where
-        (accBlockId, accRegister, block, superBlocks) = buildBlock (Just statement) startBlockId startReg
+        (accBlockId, accRegister, block, superBlocks) = buildBlock statement startBlockId startReg
 
+    -- LazyBlock aggrigator
     apply :: (ExeBlockId, ExeRegister, [ExeBlock]) -> LazyBlock -> (ExeBlockId, ExeRegister, [ExeBlock])
     apply (startBlockId, startReg, blockAcc) superBlock =
       (accBlockId, accRegister, blockAcc ++ blocks)
       where
         (accBlockId, accRegister, blocks) = superBlock startBlockId startReg
 
+    -- Build intermediate blocks
     (finalBlockId', finalReg', blocks, superBlocks) = foldl combine (nextBlockId, reg, [], []) statements
 
-    rootBlock   = (rootBlockId,  snd rootBlock'  ) -- build actual start block
-    returnBlock = (finalBlockId', snd returnBlock') -- build actual return block
+    -- Build return block
+    returnBlock' = buildJump returnBlockId
+    returnBlock = (finalBlockId', returnBlock') -- build actual return block
 
+    -- Build final meta-block
     block = rootBlock : blocks ++ [returnBlock]
+
+    -- Evaluate lazy blocks
     -- Add 1 to finals to account for return block
     (finalBlockId, finalReg, restBlocks) = foldl apply (finalBlockId' + 1, finalReg' + 1, []) superBlocks
   in
     (finalBlockId, finalReg, block ++ restBlocks)
     
-buildBlock :: (Maybe Statement) -> ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, ExeBlock, [LazyBlock])
-buildBlock Nothing _ _ = (0, 0, (0, []), [])
-buildBlock (Just statement) _ _ = (0, 0, (0, []), [])
+buildBlock :: Statement -> ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, ExeBlock, [LazyBlock])
+buildBlock statement blockId register =
+  let
+    (nextBlockId, nextReg, instructs, blocks) = case statement of
+      (Assign idr expr) -> 
+        (ret, retReg + 1, instructs ++ asgnInstr, [])
+        where
+          ret = blockId + 1
+          (nextReg, instructs) = buildExpression expr register
+          (retReg, asgnInstr) = buildAssign idr nextReg
 
-
----- wrapper function to partition the boundary of blocks
----- contains an agrigator to generate the remaining blocks
---buildBlocks :: Block -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])
---buildBlocks (Block blk) n dep reg = 
---  let
---    (retReg, instructs, blocks) = buildBlock blk (dep + 1) reg
-
---    agrigator (accReg, acc) next = (nexReg, acc ++ tmpBlocks)
---      where 
---        dep2 = length acc + length blocks
---        (nexReg, tmpBlocks) = next dep2 accReg
-
---    finalBlocks = (foldl agrigator (retReg, []) blocks)
---  in
---    (fst finalBlocks, (n, instructs) : snd finalBlocks)
-
-  
-
-
----- Block builder, performs preorder traversal of as to produce a single block,
----- as well as a list of all child blocks (i.e. blocks that branch from this one)
----- the tricky part is ensuring consistent block naming
---buildBlock :: [Statement] -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction], [ExeBlockId -> ExeRegister -> (ExeRegister, [ExeBlock])])
---buildBlock [] n reg = (reg, [], [])
---buildBlock (s:xs) n reg =
---  let
---  -- Match on each statement and generate appropriate instructions
---    (nextReg, instructs, blocks) = case s of
---      (Assign idr expr) -> 
---        (retReg + 1, instructs ++ asgnInstr, [])
---        where
---          (nextReg, instructs) = buildExpression expr reg
---          (retReg, asgnInstr) = buildAssign idr nextReg
-
---      (Return idr) -> (retReg + 1, retInstr, [])
---        where (retReg, retInstr) = buildReturn idr reg
+      (Return idr) -> 
+        (ret, retReg + 1, retInstr, [])
+        where
+          ret = blockId + 1
+          (retReg, retInstr) = buildReturn idr register
         
---      (IfElse cond block1 block2) -> 
---        (retReg + 1, condInstr, [blocks1, blocks2])
---        where
---          -- lazily store blocks until entire previous block is generated
---          ref1 = n
---          ref2 = n + 1
---          blocks1 = buildBlocks block1 ref1
---          blocks2 = buildBlocks block2 ref2
---          (retReg, condInstr) = buildCond cond ref1 ref2 reg
+      (IfElse cond block1 block2) -> 
+        (ret, retReg + 1, condInstr, [blocks1, blocks2])
+        where
+          -- lazily store blocks until entire previous block is generated
+          ref1 = blockId + 1 -- first branch of ifelse
+          ref2 = blockId + 2 -- second branch of iflse
+          ret  = blockId + 3 -- return block after iflse
+          blocks1 = buildBlocks' block1 ref1 ret
+          blocks2 = buildBlocks' block2 ref2 ret
+          (retReg, condInstr) = buildCond cond ref1 ref2 register
 
---    -- Recurse through remaining statements to gather remaining instructions
---    -- Also store Dependant blocks
---    (lastReg, restInstructs, restBlocks) = buildBlock xs (n + (length blocks)) nextReg
---  in
---    -- Group all functions for this block together
---    (lastReg, instructs ++ restInstructs, blocks ++ restBlocks)
+    jump = buildJump nextBlockId
+    block = (blockId, instructs ++ jump)
+    in
+      (nextBlockId + 1, nextReg, block, blocks)
 
----- 
---buildExpression :: Exp -> ExeRegister -> (ExeRegister, [ExeInstruction])
----- Base cases
---buildExpression (ExpNum x) reg = (reg, [["lc", showReg reg, show x]])
---buildExpression (ExpId x) reg = (reg, [["ld", showReg reg, x]])
 
----- generate instructions to load arguments into registers so they can be called
---buildExpression (ExpFun name args) reg = 
---  ((retReg), argInstructs ++ [["call", showReg (retReg), name] ++ (map showReg argRegs)])
---  where
---    (argRegs, argInstructs) = loadArgs args reg
---    retReg = if (not (null argRegs)) then (last argRegs) + 1 else reg
+buildJump :: ExeBlockId -> [ExeInstruction]
+buildJump target = [["br", showReg 0, show target, show target]]
 
----- Recursively build all required instructions for an expression
----- perpend them to the final expression
---buildExpression (ExpOp op expr1 expr2) reg = 
---  (retReg, expr1Instructs ++
---        expr2Instructs ++
---        [[show op,
---          showReg retReg,
---          showReg expr1reg,
---          showReg expr2reg]])
---  where
---    (expr1reg, expr1Instructs) = buildExpression expr1 reg
---    (expr2reg, expr2Instructs) = buildExpression expr2 (expr1reg + 1)
---    retReg = expr2reg + 1
+buildExpression :: Exp -> ExeRegister -> (ExeRegister, [ExeInstruction])
+-- Base cases
+buildExpression (ExpNum x) reg = (reg, [["lc", showReg reg, show x]])
+buildExpression (ExpId x) reg = (reg, [["ld", showReg reg, x]])
 
----- generate all the load instructions for use with call
---loadArgs :: Args -> ExeRegister -> ([ExeRegister], [ExeInstruction])
---loadArgs (Args args) reg =
---  let
---    combineArgs (regAcc, instAcc) expression = 
---      (regAcc ++ [reg], instAcc ++ inst)
---      where
---        reg = ((last regAcc) + 1)
---        (nextReg, inst) = buildExpression (ExpId expression) reg
+-- generate instructions to load arguments into registers so they can be called
+buildExpression (ExpFun name args) reg = 
+ ((retReg), argInstructs ++ [["call", showReg (retReg), name] ++ (map showReg argRegs)])
+ where
+   (argRegs, argInstructs) = loadArgs args reg
+   retReg = if (not (null argRegs)) then (last argRegs) + 1 else reg
 
---    (argRegs, argInstr) = foldl combineArgs ([reg-1],[]) args
---  in
---    (tail argRegs, argInstr)
+-- Recursively build all required instructions for an expression
+-- perpend them to the final expression
+buildExpression (ExpOp op expr1 expr2) reg = 
+ (retReg, expr1Instructs ++
+       expr2Instructs ++
+       [[show op,
+         showReg retReg,
+         showReg expr1reg,
+         showReg expr2reg]])
+ where
+   (expr1reg, expr1Instructs) = buildExpression expr1 reg
+   (expr2reg, expr2Instructs) = buildExpression expr2 (expr1reg + 1)
+   retReg = expr2reg + 1
 
----- assign a register value to an id
---buildAssign :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
---buildAssign idr reg =
---  (reg, [["st", idr, showReg reg]])
+-- generate all the load instructions for use with call
+loadArgs :: Args -> ExeRegister -> ([ExeRegister], [ExeInstruction])
+loadArgs (Args args) reg =
+ let
+   combineArgs (regAcc, instAcc) expression = 
+     (regAcc ++ [reg], instAcc ++ inst)
+     where
+       reg = ((last regAcc) + 1)
+       (nextReg, inst) = buildExpression (ExpId expression) reg
 
----- given register and 2 block ids generate the appropriate branch instruction
---buildCond :: Id -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction])
---buildCond idr block1 block2 reg =
---  (retReg, idInstr ++ [["br", showReg retReg, show block1, show block2]])
---  where (retReg, idInstr) = buildExpression (ExpId idr) reg
+   (argRegs, argInstr) = foldl combineArgs ([reg-1],[]) args
+ in
+   (tail argRegs, argInstr)
 
----- load the id into a register and build return instruction
---buildReturn :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
---buildReturn idr reg =
---  (retReg, (instructs ++ [["ret", showReg retReg]]))
---  where (retReg, instructs) = buildExpression (ExpId idr) reg
+-- assign a register value to an id
+buildAssign :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
+buildAssign idr reg =
+ (reg, [["st", idr, showReg reg]])
+
+-- given register and 2 block ids generate the appropriate branch instruction
+buildCond :: Id -> ExeBlockId -> ExeBlockId -> ExeRegister -> (ExeRegister, [ExeInstruction])
+buildCond idr block1 block2 reg =
+ (retReg, idInstr ++ [["br", showReg retReg, show block1, show block2]])
+ where (retReg, idInstr) = buildExpression (ExpId idr) reg
+
+-- load the id into a register and build return instruction
+buildReturn :: Id -> ExeRegister -> (ExeRegister, [ExeInstruction])
+buildReturn idr reg =
+ (retReg, (instructs ++ [["ret", showReg retReg]]))
+ where (retReg, instructs) = buildExpression (ExpId idr) reg
 
 -- Pretty printing functions, simple traversal of data structure
 -- Fairly self explanatory
