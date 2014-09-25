@@ -38,6 +38,4 @@ assertException ex action =
 
 -- Need an instance decleration so I can pass a String in for the Error type
 --instance Eq ErrorCall where
- --   x == y = (show x) == (show y)
-
-
+--    x == y = (show x) == (show y)
