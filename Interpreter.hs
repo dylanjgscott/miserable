@@ -32,7 +32,7 @@ runProgram p args = runFunction p "main" args
                         (AsmLt reg1 reg2 reg3) -> runInstructions is (setReg reg1 (if ((getReg reg2 s) < (getReg reg3 s)) then 1 else 0) s)
                         (AsmGt reg1 reg2 reg3) -> runInstructions is (setReg reg1 (if ((getReg reg2 s) > (getReg reg3 s)) then 1 else 0) s)
                         (AsmEq reg1 reg2 reg3) -> runInstructions is (setReg reg1 (if ((getReg reg2 s) == (getReg reg3 s)) then 1 else 0) s)
-                        (AsmBr reg b1 b2) -> if reg == 0 then runBlock blocks b2 s else runBlock blocks b1 s
+                        (AsmBr reg b1 b2) -> if (getReg reg s) == 0 then runBlock blocks b2 s else runBlock blocks b1 s
                         (AsmRet r) -> getReg r s
                         (AsmCall reg id regs) ->
                             let
