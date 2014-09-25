@@ -1,0 +1,13 @@
+(
+	(
+        main
+        (n)
+        (
+            0
+                (ld r1 n)
+                (lc r2 1)
+                (add r3 r2 r1)
+                (ret r3)
+        )
+    )
+)
