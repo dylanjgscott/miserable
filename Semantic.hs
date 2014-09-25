@@ -120,7 +120,7 @@ getReturnId _           = [] --should never happen...
 -------------------------------------------------------------------------
 --  Mismatching number of arguments at function call: "Error: function '<function name>' expects <n> argument(s)."
 --  Return  True -> wrong number of args + String Function Name + String -> num args as strings
---          False -> all is well
+--          False -> all is well return an empty String ""
 -------------------------------------------------------------------------
 argsMismatch :: Program -> [Char] ---(Bool, (String, String))
 argsMismatch [] = ""
@@ -235,8 +235,8 @@ getFuncId (Function id _ _ _)	= [id]
 
 -------------------------------------------------------------------------
 --  Undefined Function: "Error: function '<function name>' undefined."
---  Return  True -> undefined function exists + String name
---          False -> no repeats
+--  Return  True -> Error String containing Function name.
+--          False -> an empty string ""
 -------------------------------------------------------------------------
 undefinedFunc :: Program -> [Char]
 undefinedFunc [] = ""

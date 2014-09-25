@@ -43,24 +43,25 @@ Misery and Company can be compiled with the 'make' command in the root directory
 
 The unit testing suite can be compiled and run with the 'make test' command. See tools note below for further information
 
+
 -------------------------
 Languages, Tools and Version Numbers
 -------------------------
 
-Haskell ghc 7.4.1
+Haskell ghc 7.4.1 - 7.6.1 (Should also work on ghc 7.8)
 Happy 1.18.9
 Alex 3.0.1
 
 For testing to work:
 
-Haskell Testing Framework:
+The following Haskell Testing Framework must be installed:
 HUnit 1.2.5.2  
-
+cabal-install version 1.16.0
 ----------
 HUnit Tests
 ----------
 
-see test files
+see test files for details
 
 
 
