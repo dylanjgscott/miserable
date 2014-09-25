@@ -2,9 +2,12 @@ module InterpreterTests where
 
 import Interpreter
 import Test.HUnit
+import TestLib
 import System.Process 
 import AsmParser
 import AsmLexer
+import Control.Exception
+import Control.Monad
 -----------------------------
 --test0: fact.txt 3 
 --	3! with valid factorial program should retuen 6
@@ -52,6 +55,15 @@ test6 = TestCase (do
         let args = [79] in
 		assertEqual "add one func 2" (getResult input args) 80)
 
+test7 = TestCase (do
+            input <- readFile "tests/input/asm5.txt"
+            let args = [3]
+            assertException (ErrorCall "No function defined named 'main'.")(evaluate (getResult input args)))
+
+test8 = TestCase (do
+            input <- readFile "tests/input/asm6.txt"
+            let args = [3]
+            assertException (ErrorCall "No function defined named 'fact'.")(evaluate (getResult input args)))
 
 -- | List of Tests we pass to Tester.hs
 
@@ -63,5 +75,7 @@ interpreterTests = TestList
         TestLabel "add one main 1" test3,
         TestLabel "add one main 2" test4,
         TestLabel "add one func 1" test5,
-        TestLabel "add one func 2" test6
+        TestLabel "add one func 2" test6,
+        TestLabel "no main" test7,
+        TestLabel "undefined func" test8
     ]
