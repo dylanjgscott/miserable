@@ -22,32 +22,32 @@ test0 = TestCase (do
 -- | No main function: should throw error.
 test1 = TestCase (do
             input <- readFile "tests/input/fact_noMain.txt"
-            assertException (ErrorCall "\nError: No main function defined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: No main function defined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Undefined function: should throw error.
 test2 = TestCase (do
             input <- readFile "tests/input/undefinedFunc.txt"
-            assertException (ErrorCall "\nError: function 'myfunc' undefined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'myfunc' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Redefined function: should throw error.
 test3 = TestCase (do
             input <- readFile "tests/input/repeatFunc.txt"
-            assertException (ErrorCall "\nError: function 'factorial' redefined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'factorial' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Wrong number of args for function: should throw error.
 test4 = TestCase (do
             input <- readFile "tests/input/argsMismatch.txt"
-            assertException (ErrorCall "\nError: function 'factorial' expects 1 argument(s).\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'factorial' expects 1 argument(s).")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Undefined variable: should throw error.
 test5 = TestCase (do
             input <- readFile "tests/input/undefinedVar.txt"
-            assertException (ErrorCall "\nError: variable 'foo' undefined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: variable 'foo' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Undefined variable: should throw error.
 test6 = TestCase (do
             input <- readFile "tests/input/redefinedVar.txt"
-            assertException (ErrorCall "\nError: variable 'n' redefined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: variable 'n' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 
 
