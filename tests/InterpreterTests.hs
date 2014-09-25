@@ -65,6 +65,16 @@ test8 = TestCase (do
             let args = [3]
             assertException (ErrorCall "No function defined named 'fact'.")(evaluate (getResult input args)))
 
+test9 = TestCase (do
+            input <- readFile "tests/input/asm6.txt"
+            let args = [3, 4]
+            assertException (ErrorCall "Wrong number of arguments for function 'main'.")(evaluate (getResult input args)))
+
+test10 = TestCase (do
+            input <- readFile "tests/input/asm7.txt"
+            let args = [3]
+            assertException (ErrorCall "Yikes! Reached end of block.")(evaluate (getResult input args)))
+
 -- | List of Tests we pass to Tester.hs
 
 interpreterTests = TestList
@@ -77,5 +87,7 @@ interpreterTests = TestList
         TestLabel "add one func 1" test5,
         TestLabel "add one func 2" test6,
         TestLabel "no main" test7,
-        TestLabel "undefined func" test8
+        TestLabel "undefined func" test8,
+        TestLabel "wrong args" test9,
+        TestLabel "end of block" test10
     ]

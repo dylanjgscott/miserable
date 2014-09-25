@@ -20,6 +20,7 @@ runProgram p args = runFunction p "main" args
                 runBlockHelper (AsmBlock _ instructions) s = runInstructions instructions s
 
                 runInstructions :: [AsmInstruction] -> MachineState -> Integer
+                runInstructions [] _ = error "Yikes! Reached end of block."
                 runInstructions (i:is) s =
                     case i of
                         (AsmLc reg num) -> runInstructions is (setReg reg num s)
@@ -51,7 +52,7 @@ findBlock [] _ = error "Block does not exist."
 findBlock (b@(AsmBlock blockNum _):bs) num = if blockNum == num then b else findBlock bs num
 
 buildFunctionState :: AsmFunction -> [AsmNum] -> MachineState
-buildFunctionState (AsmFunction _ args _) nums = (zip args nums, [])
+buildFunctionState (AsmFunction id args _) nums = if length args == length nums then (zip args nums, []) else error ("Wrong number of arguments for function '" ++ id ++ "'.")
 
 getReg :: AsmReg -> MachineState -> AsmNum
 getReg reg (ms, rs) = getRegHelper reg rs
