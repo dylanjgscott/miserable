@@ -38,11 +38,11 @@ runProgram p s = runFunction p "main" s
                         (AsmBr reg b1 b2) -> if reg == 0 then runBlock blocks b2 s else runBlock blocks b1 s
                         (AsmRet r) -> getReg r s
                         -- I think there is a bug in the code below.
-                        (AsmCall reg id rs) ->
+                        (AsmCall reg id regs) ->
                             let
                                 func = findFunction p id
-                                funcArgs = getFunctionArgs func
-                                newState = (zip funcArgs (map (\x -> getReg x s) rs), [])
+                                regValues = map (\x -> getReg x s) regs
+                                newState = buildFunctionState func regValues
                                 funcResult = runFunction p id newState
                             in
                                 runInstructions is (setReg reg funcResult s)
@@ -55,8 +55,8 @@ findBlock :: [AsmBlock] -> AsmNum -> AsmBlock
 findBlock [] _ = error "Block does not exist."
 findBlock (b@(AsmBlock blockNum _):bs) num = if blockNum == num then b else findBlock bs num
 
-getFunctionArgs :: AsmFunction -> [AsmId]
-getFunctionArgs (AsmFunction _ args _) = args
+buildFunctionState :: AsmFunction -> [AsmNum] -> MachineState
+buildFunctionState (AsmFunction _ args _) nums = (zip args nums, [])
 
 getReg :: AsmReg -> MachineState -> AsmNum
 getReg reg (ms, rs) = getRegHelper reg rs
