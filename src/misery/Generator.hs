@@ -5,11 +5,14 @@ import Data.List
 
 type ExeProgram = [ExeFunction]
 type ExeFunction = (ExeId, [ExeId], [ExeBlock])
+type ExeSuperBlock = [ExeBlock]
 type ExeBlock = (ExeBlockId, [ExeInstruction])
 type ExeInstruction = [String]
 type ExeId = String
 type ExeBlockId = Int
 type ExeRegister = Int
+
+type LazySuperBlock = ExeBlockId -> ExeRegister -> (ExeSuperBlock, ExeBlockId, ExeRegister, [LazySuperBlock])
 
 
 -- maps generated functions from the ast function list
@@ -21,6 +24,37 @@ genFunction :: Function -> ExeFunction
 genFunction (Function idr (Args args) _ block) =
    (idr, args, blocks)
    where (_, blocks) = buildBlocks block 0 0 1
+
+--                 Root          Return
+buildSuperBlock :: ExeBlockId -> ExeBlockId -> Block -> [LazySuperBlock]
+buildSuperBlock rootBlockId returnBlockId (Block statements) = 
+  let
+  --                  Start         StartReg
+  buildSuperBlock' :: ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, ExeSuperBlock, [LazySuperBlock])
+  buildSuperBlock' start reg =
+    let
+      (nextBlockId, rootBlock'   , _) = buildBlock [] start     reg -- reg not used
+      (_          , returnBlock' , _) = buildBlock [] (returnBlockId - 1) reg -- reg not used
+
+      combine (startBlockId, startReg, blockAcc, superBlockAcc) statement =
+        (accBlockId, accRegister, blockAcc ++ block, superBlockAcc ++ superBlocks)
+        where
+        (accBlockId, accRegister, block, superBlocks) = buildBlock statement startBlockId startReg
+
+      (finalBlockId, finalReg, blocks, superBlocks) foldl combine (nextBlockId, [], []) statements
+
+      rootBlock   = (rootBlockId,  snd rootBlock'  ) -- build actual start block
+      returnBlock = (finalBlockId, snd returnBlock') -- build actual return block
+
+      superBlock = rootBlock : blocks ++ [returnBlock]
+    in
+      (finalBlockId, finalReg, superBlock, superBlocks)
+
+
+    
+buildBlock :: Statement -> ExeBlockId -> ExeRegister -> (ExeBlockId, ExeRegister, ExeBlock, [LazySuperBlock])
+buildBlock statement blockId = (0, 0, (0, []), [])
+
 
 -- wrapper function to partition the boundary of blocks
 -- contains an agrigator to generate the remaining blocks
@@ -37,6 +71,7 @@ buildBlocks (Block blk) n dep reg =
     finalBlocks = (foldl agrigator (retReg, []) blocks)
   in
     (fst finalBlocks, (n, instructs) : snd finalBlocks)
+
   
 
 
