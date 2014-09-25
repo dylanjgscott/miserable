@@ -9,14 +9,14 @@ type MachineState = (MemoryState, RegisterState)
 -- Clearly I am not a Haskell programmer.
 -- This is a huge mess but I think it will work.
 
-runProgram :: AsmProgram -> MachineState -> Integer
-runProgram p s = runFunction p "main" s
+runProgram :: AsmProgram -> [AsmNum] -> Integer
+runProgram p args = runFunction p "main" args
     where
-        runFunction :: AsmProgram -> AsmId -> MachineState -> Integer
-        runFunction p id s = runFunctionHelper (findFunction p id) s
+        runFunction :: AsmProgram -> AsmId -> [AsmNum] -> Integer
+        runFunction p id args = runFunctionHelper (findFunction p id) args
 
-        runFunctionHelper :: AsmFunction -> MachineState -> Integer
-        runFunctionHelper (AsmFunction _ _ blocks) s = runBlock blocks 0 s
+        runFunctionHelper :: AsmFunction -> [AsmNum] -> Integer
+        runFunctionHelper f@(AsmFunction _ _ blocks) args = runBlock blocks 0 (buildFunctionState f args)
             where
                 runBlock blocks num state = runBlockHelper (findBlock blocks num) state
                 runBlockHelper :: AsmBlock -> MachineState -> Integer
@@ -42,8 +42,7 @@ runProgram p s = runFunction p "main" s
                             let
                                 func = findFunction p id
                                 regValues = map (\x -> getReg x s) regs
-                                newState = buildFunctionState func regValues
-                                funcResult = runFunction p id newState
+                                funcResult = runFunction p id regValues
                             in
                                 runInstructions is (setReg reg funcResult s)
 

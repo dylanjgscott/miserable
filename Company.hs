@@ -21,6 +21,4 @@ main
         source <- readFile fileName
         let asm = asmParse (alexScanTokens source)
         let asmArgs = getAsmArgs args
-        let main = findFunction asm "main"
-        let state = buildFunctionState main asmArgs
-        print $ runProgram asm state
+        print $ runProgram asm asmArgs
