@@ -38,7 +38,7 @@ buildBlocks' (Block statements) rootBlockId returnBlockId  start reg =
     -- Build root block
     rootBlock' = buildJump start
     rootBlock   = (rootBlockId,  rootBlock'  ) -- build actual start block
-    nextBlockId = start + 1
+    nextBlockId = start
 
     -- Current block aggrigator
     combine :: (ExeBlockId, ExeRegister, [ExeBlock], [LazyBlock]) -> Statement -> (ExeBlockId, ExeRegister, [ExeBlock], [LazyBlock])
@@ -101,7 +101,7 @@ buildBlock statement blockId register =
     jump = buildJump nextBlockId
     block = (blockId, instructs ++ jump)
     in
-      (nextBlockId + 1, nextReg, block, blocks)
+      (nextBlockId, nextReg, block, blocks)
 
 
 buildJump :: ExeBlockId -> [ExeInstruction]
