@@ -127,12 +127,11 @@ argsMismatch [] = ""
 argsMismatch p = "" ++ (genArgsMismatchError p)
 
 -- | Map function for error String composition
-argMismatchString				:: Program -> (Id, Int) -> [Char]                           {-Int below is wrong - need a "getFuncArgsNum"-}
+argMismatchString				:: Program -> (Id, Int) -> [Char]                          
 argMismatchString p (id, int) 	= ("Error: function '" ++ id ++ "' expects " ++ (show (getRealNumArgs id p)) ++ " argument(s).") 
-                                                                    {- Currently passing back the badly called funcs args num :(-}
-
+                                                                    
 head'		:: [a] -> a
-head' []	= error "empty list passed in..."
+head' []	= error "Error: Unexpected error, Misery apologises\n"	-- Probably don't need this
 head' (x:_) = x
 
 -- | Get num args that should have been passed to function
@@ -279,7 +278,7 @@ getSemanticErrors p = ""
 
 -- | Error function to call if we fund error(s)
 semanticError :: [Char] -> a
-semanticError err = error ("\n" ++ err)             --Newline to ensure we start errors on a fresh line. 
+semanticError err = error (init ("\n" ++ err))             --Newline to ensure we start errors on a fresh line. 
 
 
 
