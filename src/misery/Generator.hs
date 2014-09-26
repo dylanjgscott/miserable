@@ -95,11 +95,10 @@ buildBlocks' (Block statements) rootBlockId returnBlockId  start reg =
     (finalBlockId', finalReg', blocks, superBlocks) = foldl combine (nextBlockId, reg, [], []) statements
 
     -- Build return block
-    returnBlock' = buildJump returnBlockId
-    returnBlock = (finalBlockId', returnBlock') -- build actual return block
+    returnBlock = if returnBlockId == -1 then [] else [(finalBlockId', buildJump returnBlockId)]
 
     -- Build final block list
-    block = rootBlock : blocks ++ [returnBlock]
+    block = rootBlock : blocks ++ returnBlock
 
     -- Evaluate lazy blocks
     -- Add 1 to finals to account for return block
