@@ -20,6 +20,7 @@ runProgram p args = runFunction p "main" args
                 runBlockHelper (AsmBlock _ instructions) s = runInstructions instructions s
 
                 runInstructions :: [AsmInstruction] -> MachineState -> Integer
+                runInstructions [] _ = error "Yikes! Reached end of block."
                 runInstructions (i:is) s =
                     case i of
                         (AsmLc reg num) -> runInstructions is (setReg reg num s)
