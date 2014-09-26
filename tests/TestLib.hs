@@ -41,7 +41,7 @@ assertException ex action =
 
 -- The following instance declaration is needed in < ghc 7.8 for out unit tests to be able to catch the error string.
 -- However, in ghc 7.8 it has been included so I have resorted to preprocessor code in case this gets compiled in ghc 7.8+
--- Should no work on all ghc 7.4 .. 7.8
+-- Should now work on all ghc 7.4 .. 7.8
 
 -- Need an instance decleration so I can pass a String in for the Error type
 instance Eq ErrorCall where
