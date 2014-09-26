@@ -43,11 +43,6 @@ buildBlocks block =
   zeroBlock = (zeroBlockId, zeroRegister : (buildJump 1))
 
   -- Build this block and all children blocks
-  -- Currently the return jump at the end of a 
-  -- root block is set to -1, this is not in the
-  -- grammar but if this jump is hit, the interpreter
-  -- should crash anyway, as this will only occur
-  -- if a functions doesn't return
   (_, _, blocks) = buildBlocks' block 
                                 (zeroBlockId + 1)
                                 (failBlock)
