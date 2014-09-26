@@ -75,6 +75,11 @@ test10 = TestCase (do
             let args = [3]
             assertException (ErrorCall "Yikes! Reached end of block.")(evaluate (getResult input args)))
 
+test11 = TestCase (do
+            input <- readFile "tests/input/asmbranch.txt"
+            let args = [3]
+            assertException (ErrorCall "Block does not exist.")(evaluate (getResult input args)))
+
 -- | List of Tests we pass to Tester.hs
 
 interpreterTests = TestList
@@ -89,5 +94,6 @@ interpreterTests = TestList
         TestLabel "no main" test7,
         TestLabel "undefined func" test8,
         TestLabel "wrong args" test9,
-        TestLabel "end of block" test10
+        TestLabel "end of block" test10,
+        TestLabel "missing block" test11
     ]
