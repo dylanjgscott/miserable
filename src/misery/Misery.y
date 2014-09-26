@@ -93,7 +93,7 @@ Exp         : NumProd                               { ExpNum $1              }
 
 IdProd      : ID                                    { if $1 == "main"
                                                       then $1 
-                                                      else "var" ++ $1       } -- Rename ids to prevent naming conflicts
+                                                      else "IDx" ++ $1       } -- Rename ids to prevent naming conflicts
                                                                                -- in intermediate representation
 
 NumProd     : NUM                                   { $1                     }
