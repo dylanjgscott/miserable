@@ -80,6 +80,16 @@ test11 = TestCase (do
             let args = [3]
             assertException (ErrorCall "Block does not exist.")(evaluate (getResult input args)))
 
+test12 = TestCase (do
+            input <- readFile "tests/input/asm8.txt"
+            let args = [3]
+            assertException (ErrorCall "'x' not initialised!")(evaluate (getResult input args)))
+
+test13 = TestCase (do
+            input <- readFile "tests/input/asm9.txt"
+            let args = [3]
+            assertException (ErrorCall "'r1' not initialised!")(evaluate (getResult input args)))
+
 -- | List of Tests we pass to Tester.hs
 
 interpreterTests = TestList
@@ -95,5 +105,7 @@ interpreterTests = TestList
         TestLabel "undefined func" test8,
         TestLabel "wrong args" test9,
         TestLabel "end of block" test10,
-        TestLabel "missing block" test11
+        TestLabel "missing block" test11,
+        TestLabel "uninitialised memory" test12,
+        TestLabel "uninitialised register" test13
     ]

@@ -58,7 +58,7 @@ getReg :: AsmReg -> MachineState -> AsmNum
 getReg reg (ms, rs) = getRegHelper reg rs
     where
         getRegHelper :: AsmReg -> RegisterState -> Integer
-        getRegHelper _ [] = 0
+        getRegHelper reg [] = error ("'r" ++ show reg ++ "' not initialised!")
         getRegHelper reg (x:xs) = if fst x == reg then snd x else getRegHelper reg xs
 
 setReg :: AsmReg -> AsmNum -> MachineState -> MachineState
@@ -72,7 +72,7 @@ getMem :: AsmId -> MachineState -> AsmNum
 getMem id (ms, rs) = getMemHelper id ms
     where
         getMemHelper :: AsmId -> MemoryState -> Integer
-        getMemHelper _ [] = 0
+        getMemHelper id [] = error ("'" ++ id ++ "' not initialised!")
         getMemHelper id (x:xs) = if fst x == id then snd x else getMemHelper id xs
 
 
