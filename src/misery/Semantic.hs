@@ -4,6 +4,10 @@ module Semantic where
 import Program
 -- Other Modules
 import Data.List -- nub, \\ and other list functions
+import Data.Maybe
+
+-- | Helper
+
 
 -------------------------------------------------------------------------
 --  If a program does not define main: "Error: No main function defined."
@@ -29,12 +33,15 @@ repeatId (f:fs) = "" ++ (getFuncRepeatIdErrors f) ++ (repeatId fs)  -- Recurse t
 
 -- | Function to generate the error string to pass back
 getFuncRepeatIdErrors   :: Function -> [Char]
-getFuncRepeatIdErrors f = unlines (map (++ "' redefined.") (map ("Error: variable '" ++) (getRepeatIds f)))
+getFuncRepeatIdErrors f = unlines (map ((++ "' redefined.").("Error: variable '" ++)) (getRepeatIds f))
+
 
 -- | Get all the duplicate Ids
 getRepeatIds    :: Function -> [Id]
-getRepeatIds f  = (allArgs) \\ (nub (allArgs))
-			where allArgs = ((getFuncArgs f) ++ (getFuncVars f))
+getRepeatIds f  = map fromJust (map (stripPrefix "IDx") retArgs)
+			where 
+				allArgs = ((getFuncArgs f) ++ (getFuncVars f))
+				retArgs = (allArgs) \\ (nub (allArgs))
 -- | Get Args for a function
 getFuncArgs                         :: Function -> [Id]
 getFuncArgs (Function _ args _ _)   = getArgIds args
@@ -65,7 +72,7 @@ getUndefinedVarsErrors f    = unlines (map (++ "' undefined.") (map("Error: vari
 
 -- | Get List of used vars that have not been declared.
 getFuncUndefinedVars   :: Function -> [Id]
-getFuncUndefinedVars f = (nub (getFuncUsedVars f)) \\ (getDeclaredVars f)
+getFuncUndefinedVars f = map fromJust (map (stripPrefix "IDx")((nub (getFuncUsedVars f)) \\ (getDeclaredVars f)))
 
 -- | Get list of declared variables in a function.
 getDeclaredVars     :: Function -> [Id]
@@ -104,7 +111,7 @@ argsMismatch p  = "" ++ (genArgsMismatchError p)
 
 -- | Map function for error String composition
 argMismatchString				:: Program -> (Id, Int) -> [Char]                          
-argMismatchString p (id, int) 	= ("Error: function '" ++ id ++ "' expects " ++ (show (getRealNumArgs id p)) ++ " argument(s).") 
+argMismatchString p (id, int) 	= ("Error: function '" ++ (fromJust (stripPrefix "IDx" id)) ++ "' expects " ++ (show (getRealNumArgs id p)) ++ " argument(s).") 
                                                                     
 head'		:: [a] -> a
 head' []	= error "Error: Unexpected error, Misery apologises\n"	-- Probably don't need this
@@ -180,7 +187,7 @@ genRepeatFuncErrors p	= unlines (map (++ "' redefined.") (map ("Error: function 
 
 -- | Get list of repeated Functions
 getRepeatFuncIds	:: Program -> [Id]
-getRepeatFuncIds p	= funcIds \\ (nub funcIds)
+getRepeatFuncIds p	= (map fromJust (map (stripPrefix "IDx") (funcIds \\ (nub funcIds))))
 					where funcIds = getProgFuncIds p
 
 -- | Get list of function Ids
@@ -207,8 +214,8 @@ genUndefinedFuncErrors p	= unlines (map (++ "' undefined.") (map ("Error: functi
 
 -- | Compares a list of called functions with list of defined functions and returns any undefined functions
 getUndefinedFuncErrors		:: Program -> [Id]
-getUndefinedFuncErrors p	= (nub (getListofFuncIds (getProgFuncCalls p))) \\ (getListofFuncIds (getProgFuncDefs p))
-
+getUndefinedFuncErrors p	= map fromJust (map (stripPrefix "IDx") resFuncs)
+							where resFuncs = (nub (getListofFuncIds (getProgFuncCalls p))) \\ (getListofFuncIds (getProgFuncDefs p))
 -- | Converts list of function + arg tuples to just Ids. re-using code from argMismatch check.
 getListofFuncIds		:: [(Id, Int)] -> [Id]
 getListofFuncIds ls		= map fst ls
@@ -226,7 +233,6 @@ semanticCheck p = if (null semError)
 
 -- | Attempts to construct and error string for each type of error.  
 getSemanticErrors       :: Program -> [Char]
-getSemanticErrors []    = "Error: empty file..."       -- Empty program... otherwise it would return as valid and be output to file.
 getSemanticErrors p     = "" 
                         ++ (noMainDefined p)            
                         ++ (undefinedFunc p)            

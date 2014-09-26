@@ -27,27 +27,27 @@ test1 = TestCase (do
 -- | Undefined function: should throw error.
 test2 = TestCase (do
             input <- readFile "tests/input/src/undefinedFunc.txt"
-            assertException (ErrorCall "\nError: function 'IDxmyfunc' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'myfunc' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Redefined function: should throw error.
 test3 = TestCase (do
             input <- readFile "tests/input/src/repeatFunc.txt"
-            assertException (ErrorCall "\nError: function 'IDxfactorial' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'factorial' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Wrong number of args for function: should throw error.
 test4 = TestCase (do
             input <- readFile "tests/input/src/argsMismatch.txt"
-            assertException (ErrorCall "\nError: function 'IDxfactorial' expects 1 argument(s).")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: function 'factorial' expects 1 argument(s).")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Undefined variable: should throw error.
 test5 = TestCase (do
             input <- readFile "tests/input/src/undefinedVar.txt"
-            assertException (ErrorCall "\nError: variable 'IDxfoo' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: variable 'foo' undefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Undefined variable: should throw error.
 test6 = TestCase (do
             input <- readFile "tests/input/src/redefinedVar.txt"
-            assertException (ErrorCall "\nError: variable 'IDxn' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
+            assertException (ErrorCall "\nError: variable 'n' redefined.")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
 -- | Pass to the tester
 semanticTests = TestList    [   TestLabel " test0" test0, 
