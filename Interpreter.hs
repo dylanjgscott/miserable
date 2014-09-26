@@ -51,7 +51,7 @@ findBlock [] _ = error "Block does not exist."
 findBlock (b@(AsmBlock blockNum _):bs) num = if blockNum == num then b else findBlock bs num
 
 buildFunctionState :: AsmFunction -> [AsmNum] -> MachineState
-buildFunctionState (AsmFunction _ args _) nums = (zip args nums, [])
+buildFunctionState (AsmFunction id args _) nums = if length args == length nums then (zip args nums, []) else error ("Wrong number of arguments for function '" ++ id ++ "'.")
 
 getReg :: AsmReg -> MachineState -> AsmNum
 getReg reg (ms, rs) = getRegHelper reg rs
