@@ -1,0 +1,30 @@
+FUNCTION main(n)
+VARS tmp;
+BEGIN
+    tmp = fib(n);
+    RETURN tmp;
+END
+FUNCTION fib(n)
+VARS cond, fnm1, fnm2, fn, nm1, nm2;
+BEGIN
+    cond = (n == 0);
+    IF cond
+    THEN BEGIN
+        fn = 0;
+    END
+    ELSE BEGIN
+        cond = (n == 1);
+        IF cond
+        THEN BEGIN
+            fn = 1;
+        END
+        ELSE BEGIN
+            nm1 = (n - 1);
+            nm2 = (n - 2);
+            fnm1 = fib(nm1);
+            fnm2 = fib(nm2);
+            fn = (fnm1 + fnm2);
+        END;
+    END;
+    RETURN fn;
+END
