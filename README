@@ -6,8 +6,8 @@ Assignment 2
 
 Group Members:
     Rafael Mazzoldi 310232376
-    Dylan Scott 312113625
-    ...
+    Dylan Scott     312113625
+    Alec Posney     312063385
 
 ---------------
 File Structure
@@ -17,12 +17,19 @@ README
 makefile
 compile.sh
 run.sh
-Misery.hs
-Misery.x
-Misery.y
-Program.hs
-Semantic.hs
-Generator.hs
+src/
+    misery/ 
+        makefile
+        Misery.hs
+        Misery.x
+        Misery.y
+        Program.hs
+        Semantic.hs
+        Generator.hs
+    company/
+        makefile
+        Interpreter.hs
+        Company.hs
 tests/
     InterpreterTests.hs
     LexerTests.hs
@@ -32,9 +39,6 @@ tests/
         Result files for unit testing.
     input/
         Input files for unit testing.
-Interpreter.hs
-Company.hs
-
 -------------------------
 Compilation and execution
 -------------------------
@@ -42,7 +46,6 @@ Compilation and execution
 Misery and Company can be compiled with the 'make' command in the root directory
 
 The unit testing suite can be compiled and run with the 'make test' command. See tools note below for further information
-
 
 -------------------------
 Languages, Tools and Version Numbers
