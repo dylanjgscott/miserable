@@ -16,7 +16,7 @@ noMainDefined (f:fs)    = if isMain f then "" else noMainDefined fs
 
 -- Check's the individual function for it's name
 isMain                          :: Function -> Bool
-isMain (Function name _ _ _)    = if name == "main" then True else False
+isMain (Function name _ _ _)    = name == "main" 
 
 -------------------------------------------------------------------------
 -- Two variables and/or function arguments with the same name: "Error: variable '<variable name>' redefined."
@@ -33,8 +33,8 @@ getFuncRepeatIdErrors f = unlines (map (++ "' redefined.") (map ("Error: variabl
 
 -- | Get all the duplicate Ids
 getRepeatIds    :: Function -> [Id]
-getRepeatIds f  = ((getFuncArgs f) ++ (getFuncVars f)) \\ (nub ((getFuncArgs f) ++ (getFuncVars f)))
-
+getRepeatIds f  = (allArgs) \\ (nub (allArgs))
+			where allArgs = ((getFuncArgs f) ++ (getFuncVars f))
 -- | Get Args for a function
 getFuncArgs                         :: Function -> [Id]
 getFuncArgs (Function _ args _ _)   = getArgIds args
@@ -85,7 +85,6 @@ getBlockUsedVars                                    :: Statement -> [Id]
 getBlockUsedVars (Assign id exp)                    = [id] ++ (getExpVars exp)
 getBlockUsedVars (IfElse id (Block b1) (Block b2))  = [id] ++ (getBlocks_UsedVars b1) ++ (getBlocks_UsedVars b2)
 getBlockUsedVars (Return id)                        = [id]
---getBlockUsedVars _                                  = []
 
 -- | Get all the vars in an expression
 getExpVars                  :: Exp -> [Id]
@@ -153,7 +152,7 @@ getFuncCalls_Blocks _		= []
 -- | Get the function calls at the single Statement level
 getFuncCallsBlock			                            :: Statement -> [(Id, Int)]
 getFuncCallsBlock (Assign _ exp)                        = getFuncCallExp exp
-getFuncCallsBlock (IfElse _ (Block b1)(Block b2)) = (getFuncCalls_Blocks b1) ++ (getFuncCalls_Blocks b2)  
+getFuncCallsBlock (IfElse _ (Block b1)(Block b2))		= (getFuncCalls_Blocks b1) ++ (getFuncCalls_Blocks b2)  
 getFuncCallsBlock _                                     = []
 
 -- | Get Function Calls in Exp
@@ -163,17 +162,17 @@ getFuncCallExp (ExpOp _ e1 e2)  = (getFuncCallExp e1) ++ (getFuncCallExp e2)
 getFuncCallExp _                = []
 
 -- | Return the number of arguments in a given args list of Ids
-lenArgs :: Args -> Int
-lenArgs (Args ids) = length ids 
+lenArgs				:: Args -> Int
+lenArgs (Args ids)	= length ids 
 
 -------------------------------------------------------------------------
 --  Two functions with the same name: "Error: '<function name>' redefined."
 --  Return  True -> Error String
 --          False -> Empty String
 -------------------------------------------------------------------------
-repeatFuncName :: Program -> [Char]
-repeatFuncName [] = ""
-repeatFuncName p = "" ++ (genRepeatFuncErrors p)
+repeatFuncName		:: Program -> [Char]
+repeatFuncName []	= ""
+repeatFuncName p	= "" ++ (genRepeatFuncErrors p)
 
 -- | Generate the Error string
 genRepeatFuncErrors		:: Program -> [Char]
@@ -181,7 +180,8 @@ genRepeatFuncErrors p	= unlines (map (++ "' redefined.") (map ("Error: function 
 
 -- | Get list of repeated Functions
 getRepeatFuncIds	:: Program -> [Id]
-getRepeatFuncIds p	= (getProgFuncIds p) \\ (nub (getProgFuncIds p))
+getRepeatFuncIds p	= funcIds \\ (nub funcIds)
+					where funcIds = getProgFuncIds p
 
 -- | Get list of function Ids
 getProgFuncIds			:: Program -> [Id]
@@ -189,7 +189,7 @@ getProgFuncIds	(f:fs)	= (getFuncId f) ++ (getProgFuncIds fs)
 getProgFuncIds _		= []
 
 -- | Get the Id a given function
-getFuncId							:: Function -> [Id]
+getFuncId						:: Function -> [Id]
 getFuncId (Function id _ _ _)	= [id]
 
 -------------------------------------------------------------------------
@@ -197,20 +197,20 @@ getFuncId (Function id _ _ _)	= [id]
 --  Return  True -> Error String containing Function name(s).
 --          False -> an empty string ""
 -------------------------------------------------------------------------
-undefinedFunc :: Program -> [Char]
-undefinedFunc [] = ""
-undefinedFunc p = "" ++ (genUndefinedFuncErrors p)
+undefinedFunc		:: Program -> [Char]
+undefinedFunc []	= ""
+undefinedFunc p		= "" ++ (genUndefinedFuncErrors p)
 
 -- | Generate the Error String
-genUndefinedFuncErrors	:: Program -> [Char]
-genUndefinedFuncErrors p = unlines (map (++ "' undefined.") (map ("Error: function '" ++)(getUndefinedFuncErrors p)))
+genUndefinedFuncErrors		:: Program -> [Char]
+genUndefinedFuncErrors p	= unlines (map (++ "' undefined.") (map ("Error: function '" ++)(getUndefinedFuncErrors p)))
 
 -- | Compares a list of called functions with list of defined functions and returns any undefined functions
-getUndefinedFuncErrors	:: Program -> [Id]
-getUndefinedFuncErrors p = (nub (getListofFuncIds (getProgFuncCalls p))) \\ (getListofFuncIds (getProgFuncDefs p))
+getUndefinedFuncErrors		:: Program -> [Id]
+getUndefinedFuncErrors p	= (nub (getListofFuncIds (getProgFuncCalls p))) \\ (getListofFuncIds (getProgFuncDefs p))
 
 -- | Converts list of function + arg tuples to just Ids. re-using code from argMismatch check.
-getListofFuncIds			:: [(Id, Int)] -> [Id]
+getListofFuncIds		:: [(Id, Int)] -> [Id]
 getListofFuncIds ls		= map fst ls
 
 ---------------------------------------------------------------
@@ -219,9 +219,10 @@ getListofFuncIds ls		= map fst ls
 --              If Error: raise Error + Error string containing all errors found
 ---------------------------------------------------------------
 semanticCheck   :: Program -> Bool
-semanticCheck p = if (null (getSemanticErrors p))
+semanticCheck p = if (null semError)
                     then True 
-                    else (semanticError (getSemanticErrors p))
+                    else (semanticError semError)
+				where semError = (getSemanticErrors p)
 
 -- | Attempts to construct and error string for each type of error.  
 getSemanticErrors       :: Program -> [Char]

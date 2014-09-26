@@ -1,7 +1,6 @@
 module AsmToken where
 
 data AsmToken = AsmTokenNum AsmNum
-              | AsmTokenReg AsmReg
               | AsmTokenId AsmId
               | AsmTokenParenOpen
               | AsmTokenParenClose
