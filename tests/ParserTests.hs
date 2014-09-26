@@ -29,19 +29,19 @@ import Control.Monad
 
 
 test0 = TestCase (do
-            input <- readFile "tests/input/parse0.txt"
+            input <- readFile "tests/input/src/parse0.txt"
             expected <- readFile "tests/expected/parse_out0.txt"
             assertEqual "Empty Program: " (filt(realOut input)) (filt expected))
 
 -- Syntax error
 test1 = TestCase (do
-            input <- readFile "tests/input/parse1.txt"
+            input <- readFile "tests/input/src/parse1.txt"
             expected <- readFile "tests/expected/parse_out1.txt"
             assertException (ErrorCall "Syntax Error.") (evaluate (calc (alexScanTokens input))))
 --            assertRaises "Syntax Error" (calc (alexScanTokens input)))
 
 test2 = TestCase ( do
-            input <- readFile "tests/input/fact1.txt"
+            input <- readFile "tests/input/src/fact1.txt"
             expected <- readFile "tests/expected/fact1.txt"
             assertEqual "Factorial program from assignment pdf: " (filt(realOut input)) (filt expected))
 

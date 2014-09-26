@@ -21,72 +21,72 @@ getResult input args = runProgram (getAsm input) args
 
 -- | Tests 
 test0 = TestCase (do
-        input <- readFile "tests/input/asm1.txt"
+        input <- readFile "tests/input/asm/asm1.txt"
         let args = [] in
 		assertEqual "Return constant" (getResult input args) 31)
 
 test1 = TestCase (do
-        input <- readFile "tests/input/asm2.txt"
+        input <- readFile "tests/input/asm/asm2.txt"
         let args = [71] in
 		assertEqual "Return argument 1" (getResult input args) 71)
 
 test2 = TestCase (do
-        input <- readFile "tests/input/asm2.txt"
+        input <- readFile "tests/input/asm/asm2.txt"
         let args = [79] in
 		assertEqual "Return argument 2" (getResult input args) 79)
 
 test3 = TestCase (do
-        input <- readFile "tests/input/asm3.txt"
+        input <- readFile "tests/input/asm/asm3.txt"
         let args = [79] in
 		assertEqual "add one main 1" (getResult input args) 80)
 
 test4 = TestCase (do
-        input <- readFile "tests/input/asm3.txt"
+        input <- readFile "tests/input/asm/asm3.txt"
         let args = [31] in
 		assertEqual "add one main 2" (getResult input args) 32)
 
 test5 = TestCase (do
-        input <- readFile "tests/input/asm4.txt"
+        input <- readFile "tests/input/asm/asm4.txt"
         let args = [31] in
 		assertEqual "add one func 1" (getResult input args) 32)
 
 test6 = TestCase (do
-        input <- readFile "tests/input/asm4.txt"
+        input <- readFile "tests/input/asm/asm4.txt"
         let args = [79] in
 		assertEqual "add one func 2" (getResult input args) 80)
 
 test7 = TestCase (do
-            input <- readFile "tests/input/asm5.txt"
+            input <- readFile "tests/input/asm/asm5.txt"
             let args = [3]
             assertException (ErrorCall "No function defined named 'main'.")(evaluate (getResult input args)))
 
 test8 = TestCase (do
-            input <- readFile "tests/input/asm6.txt"
+            input <- readFile "tests/input/asm/asm6.txt"
             let args = [3]
             assertException (ErrorCall "No function defined named 'fact'.")(evaluate (getResult input args)))
 
 test9 = TestCase (do
-            input <- readFile "tests/input/asm6.txt"
+            input <- readFile "tests/input/asm/asm6.txt"
             let args = [3, 4]
             assertException (ErrorCall "Wrong number of arguments for function 'main'.")(evaluate (getResult input args)))
 
 test10 = TestCase (do
-            input <- readFile "tests/input/asm7.txt"
+            input <- readFile "tests/input/asm/asm7.txt"
             let args = [3]
             assertException (ErrorCall "Yikes! Reached end of block.")(evaluate (getResult input args)))
 
 test11 = TestCase (do
-            input <- readFile "tests/input/asmbranch.txt"
+            input <- readFile "tests/input/asm/asmbranch.txt"
             let args = [3]
             assertException (ErrorCall "Block does not exist.")(evaluate (getResult input args)))
 
 test12 = TestCase (do
-            input <- readFile "tests/input/asm8.txt"
+            input <- readFile "tests/input/asm/asm8.txt"
             let args = [3]
             assertException (ErrorCall "'x' not initialised!")(evaluate (getResult input args)))
 
 test13 = TestCase (do
-            input <- readFile "tests/input/asm9.txt"
+            input <- readFile "tests/input/asm/asm9.txt"
             let args = [3]
             assertException (ErrorCall "'r1' not initialised!")(evaluate (getResult input args)))
 
