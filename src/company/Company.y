@@ -20,7 +20,6 @@ import AsmToken
 -- each token when defining the grammar.
 %token
 NUM     { AsmTokenNum   $$      }
-REG     { AsmTokenReg   $$      }
 ID      { AsmTokenId    $$      }
 '('     { AsmTokenParenOpen     }
 ')'     { AsmTokenParenClose    }
@@ -76,7 +75,10 @@ RegList         : {-empty-}                             { []                    
 RegList         : Reg RegList                           { $1 : $2               }
 
 Num             : NUM                                   { $1                    }
-Reg             : REG                                   { $1                    }
+Reg             : ID                                    { if (head $1) == 'r'
+                                                            then  read (tail $1)
+                                                            else syntaxError []
+                                                        }
 Id              : ID                                    { $1 	                }
 
 {
