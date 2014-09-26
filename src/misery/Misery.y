@@ -91,7 +91,10 @@ Exp         : NumProd                               { ExpNum $1              }
             | '(' Exp '>' Exp ')'                   { ExpOp OpGT $2 $4       }
             | '(' Exp '==' Exp ')'                  { ExpOp OpEq $2 $4       } 
 
-IdProd      : ID                                    { $1                     }
+IdProd      : ID                                    { if $1 == "main"
+                                                      then $1 
+                                                      else "var" ++ $1       } -- Rename ids to prevent naming conflicts
+                                                                               -- in intermediate representation
 
 NumProd     : NUM                                   { $1                     }
 
