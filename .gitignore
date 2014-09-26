@@ -4,6 +4,6 @@ src/company/AsmLexer.hs
 src/company/AsmParser.hs
 *.o
 *.hi
-./misery
-./company
-./tester
+misery
+company
+tester
