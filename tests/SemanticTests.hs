@@ -49,10 +49,6 @@ test6 = TestCase (do
             input <- readFile "tests/input/redefinedVar.txt"
             assertException (ErrorCall "\nError: variable 'n' redefined.\n")(evaluate (semanticCheck (calc (alexScanTokens input)))))
 
-
-
-
-
 -- | Pass to the tester
 semanticTests = TestList    [   TestLabel " test0" test0, 
                                 TestLabel " No main " test1,

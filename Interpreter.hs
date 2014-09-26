@@ -43,7 +43,7 @@ runProgram p args = runFunction p "main" args
                                 runInstructions is (setReg reg funcResult s)
 
 findFunction :: [AsmFunction] -> AsmId -> AsmFunction
-findFunction [] _ = error "No main program defined."
+findFunction [] id = error ("No function defined named '" ++ id ++ "'.")
 findFunction (f@(AsmFunction funcId _ _):fs) id = if funcId == id then f else findFunction fs id
 
 findBlock :: [AsmBlock] -> AsmNum -> AsmBlock
